@@ -2,14 +2,14 @@
 # coding=utf-8
 
 
+
 from sys import argv, exit
 from PyQt5.QtWidgets import (QWidget, QApplication, QFormLayout,
-                             QDesktopWidget, QDesktopWidget)
+                            QDesktopWidget)
 from PyQt5.QtCore import QRectF
 from gui.scene import Scene
 from gui.view import GraphicsView
-from gui.layout import Layout
-from gui.buttons import ExitButton
+from gui.menu_buttons import ExitButton
 
 
 class MainWindow(QWidget):
@@ -18,8 +18,10 @@ class MainWindow(QWidget):
         self.__size = QDesktopWidget().size()
         self.__scene = Scene(0, 0, #self.__size.width(), self.__size.height())
                              100, 100)
+
         self.__view = GraphicsView()
-        self.__layout = Layout()
+        self.exitButton = ExitButton('quit', -400, -400)
+
         self.initUI()
 
     def initUI(self):
@@ -27,9 +29,9 @@ class MainWindow(QWidget):
         self.setLayout(QFormLayout())
         # self.setWindowFlags(Qt.CustomizeWindowHint)
         # self.showFullScreen()
-        # self.__scene.addItem(self.exitButton)
-        self.__scene.addRect(QRectF(0, 0, 100, 100))
-        self.__scene.addWidget(ExitButton())
+
+        self.__scene.addItem(self.exitButton)
+
         self.__view.setScene(self.__scene)
         self.__view.show()
 

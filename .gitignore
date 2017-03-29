@@ -2,6 +2,7 @@ __pycache__/
 
 #SECTION TO IGNORE PYCHARM FILES
 # User-specific stuff:
+.idea/
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/dictionaries
