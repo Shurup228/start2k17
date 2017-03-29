@@ -5,7 +5,7 @@
 from sys import argv, exit
 from PyQt5.QtWidgets import QWidget, QApplication, QFormLayout, QDesktopWidget
 from PyQt5.QtCore import Qt
-from scene import Scene
+from gui.scene import Scene
 
 
 class MainWindow(QWidget):
