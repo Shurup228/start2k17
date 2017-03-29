@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import (QGraphicsRectItem)
 
 
 class Button(QGraphicsRectItem):
-    def __init__(self, text, x, y, width=300, height=100):
+    def __init__(self, text, x=0, y=0, width=300, height=100):
         super().__init__(x, y, width, height)
         self.__text = text
 

@@ -8,7 +8,6 @@ from PyQt5.QtWidgets import (QWidget, QApplication, QBoxLayout,
 from PyQt5.QtCore import Qt
 from gui.scene import Scene
 from gui.view import GraphicsView
-from gui.buttons import ExitButton
 
 
 class MainWindow(QWidget):
@@ -18,7 +17,6 @@ class MainWindow(QWidget):
         self.__scene = Scene(0, 0, self.__size.width(), self.__size.height())
 
         self.__view = GraphicsView(self.__scene, self)
-        self.exitButton = ExitButton('quit', 0, 0)
 
         self.initUI()
 
@@ -26,8 +24,6 @@ class MainWindow(QWidget):
         self.setLayout(QBoxLayout(QBoxLayout.LeftToRight, self))
         self.layout().addWidget(self.__view)
         self.layout().setContentsMargins(0, 0, 0, 0)
-
-        self.__scene.addItem(self.exitButton)
 
         self.setWindowFlags(Qt.CustomizeWindowHint)
         self.showFullScreen()
