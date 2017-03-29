@@ -3,13 +3,16 @@
 
 
 from sys import argv, exit
-from PyQt5.QtWidgets import QWidget, QApplication, QFormLayout
+from PyQt5.QtWidgets import QWidget, QApplication, QFormLayout, QDesktopWidget
 from PyQt5.QtCore import Qt
+from scene import Scene
 
 
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
+        self.__size = QDesktopWidget().size()
+        self.__scene = Scene(0, 0, self.__size.width(), self.__size.height())
 
         self.initUI()
 
