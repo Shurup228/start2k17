@@ -76,9 +76,16 @@ class Maps(GridLayout):
         self.addItem(self.DUMMY, 0, 0)
         self.addItem(self.DUMMY, 0, 2)
 
-        for row, map in enumerate(self.maps):
+        row = col = 0
+        for map in self.maps:
+            if col == 3:
+                col = 0
+                row += 1
+
             button = Button(map)
-            self.addItem(button, row, 1)
+            self.addItem(button, row, col)
+
+            col += 1
 
         back = Button('Back')
         back.clicked.connect(self._scene.prevScene)
