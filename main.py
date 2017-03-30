@@ -8,18 +8,24 @@ from PyQt5.QtWidgets import (QWidget, QApplication, QBoxLayout,
 from PyQt5.QtCore import Qt
 from gui.scene import Scene
 from gui.view import GraphicsView
-from gui.layout import MainMenu
+from gui.menus import MainMenu
 
 
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
+
+        self.resMode = 0
+
         self.__size = QDesktopWidget().size()
         self.__scene = Scene(0, 0, self.__size.width(), self.__size.height())
-
         self.__view = GraphicsView(self.__scene, self)
 
         self.initUI()
+
+    @property
+    def size(self):
+        return self.__size
 
     def initUI(self):
         self.setLayout(QBoxLayout(QBoxLayout.LeftToRight, self))
@@ -30,7 +36,6 @@ class MainWindow(QWidget):
 
         self.setWindowFlags(Qt.CustomizeWindowHint)
         self.showFullScreen()
-
 
 if __name__ == '__main__':
     app = QApplication(argv)

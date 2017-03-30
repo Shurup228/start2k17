@@ -61,33 +61,4 @@ class Layout:
                 item.setPos(x, y)
 
 
-class MainMenu(Layout):
-    def __init__(self, scene, widget):
-        super().__init__(scene)
-        self.winWidget = widget
-        self.makeLayout()
-
-    def makeLayout(self):
-        startButton = Button('Start')
-        optionsButton = Button('Options')
-        exitButton = Button('Quit')
-        resolutionButton = Button(str(self.winWidget.wWidth) + ' X ' + str(self.winWidget.wHeight),
-                                  self.winWidget)
-
-        #startButton.clicked.connect()
-        #optionsButton.clicked.connect()
-        resolutionButton.clicked.connect(resolutionButton.changeRes)
-        exitButton.clicked.connect(quit)
-
-
-        # self.addItem(Layout.DUMMY, 0, 0)
-        # self.addItem(Layout.DUMMY, 0, 2)
-        # self.addItem(startButton, 0, 1)
-        # self.addItem(optionsButton, 1, 1)
-        # self.addItem(exitButton, 2, 1)
-        self.addItem(resolutionButton, 0, 0)
-
-class Options(Layout):
-    pass
-
 
