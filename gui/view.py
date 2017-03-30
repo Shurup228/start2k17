@@ -10,6 +10,7 @@ class GraphicsView(QGraphicsView):
 
     def __init__(self, *args):
         super().__init__(*args)
+        self.globalRes = []
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 

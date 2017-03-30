@@ -50,27 +50,39 @@ class Options(GridLayout):
 
     def changeResol(self, resButton):
         if self.currentRes == 0:
+            self.currentRes += 1
             self.view.scale(self.resLst[self.currentRes][0] / self.nativeW,
                             self.resLst[self.currentRes][1] / self.nativeH)
             resButton.changeText(str(self.resLst[self.currentRes][0]) + ' X ' + str(self.resLst[self.currentRes][1]))
-            print(self.resLst[self.currentRes][0], self.resLst[self.currentRes][1])
-            self.currentRes += 1
+            self.view.globalRes = [self.resLst[self.currentRes]]
+            print('if')
+
 
         elif self.currentRes == len(self.resLst) - 1:
-            self.view.scale(1, 1)
+            self.view.scale(self.nativeW / self.resLst[self.currentRes][0],
+                            self.nativeH / self.resLst[self.currentRes][1])
             resButton.changeText(str(int(self.nativeW)) + ' X ' + str(int(self.nativeH)))
+            self.currentRes = 0
+            self.view.globalRes = [self.nativeW, self.nativeH]
+            print('elif', self.resLst[self.currentRes])
 
         else:
+            self.view.scale(self.nativeW / self.resLst[self.currentRes][0],
+                            self.nativeH / self.resLst[self.currentRes][1])
             self.currentRes += 1
             self.view.scale(self.resLst[self.currentRes][0] / self.nativeW,
                             self.resLst[self.currentRes][1] / self.nativeH)
             resButton.changeText(str(self.resLst[self.currentRes][0]) + ' X ' + str(self.resLst[self.currentRes][1]))
-            print(self.resLst[self.currentRes][0], self.resLst[self.currentRes][1])
+            self.view.globalRes = [self.resLst[self.currentRes]]
+            print('else', self.resLst[self.currentRes])
 
     def makeLayout(self):
+        if len(self.view.globalRes):
+            buttonText = '{} X {}'.format(self.view.globalRes[0], self.view.globalRes[1])
+        else:
+            buttonText = '{} X {}'.format(self.nativeW, self.nativeH)
         back = Button('Back')
-        res = Button('')
-
+        res = Button(buttonText)
         back.clicked.connect(self._scene.prevScene)
         res.clicked.connect(lambda: self.changeResol(res))
 
