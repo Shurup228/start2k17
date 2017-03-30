@@ -68,11 +68,18 @@ class MainMenu(Layout):
 
     def makeLayout(self):
         startButton = Button('Start')
+        optionsButton = Button('Options')
         exitButton = Button('Quit')
 
         exitButton.clicked.connect(quit)
 
-        self.addItem(startButton, 0, 0)
-        self.addItem(exitButton, 0, 1)
+        self.addItem(Layout.DUMMY, 0, 0)
+        self.addItem(Layout.DUMMY, 0, 2)
+        self.addItem(startButton, 0, 1)
+        self.addItem(optionsButton, 1, 1)
+        self.addItem(exitButton, 2, 1)
+
+class Options(Layout):
+    pass
 
 
