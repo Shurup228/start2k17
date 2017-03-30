@@ -36,19 +36,46 @@ class MainMenu(GridLayout):
 
 
 class Options(GridLayout):
+    resLst = [[800, 600], [1024, 768], [1366, 768], [1920, 1080]]
+
     def __init__(self, scene):
         super().__init__(scene)
         self.view = self._scene.views()[0]
         self.view.escPressed.connect(self._scene.prevScene)
 
+        self.currentRes = 0
+        self.nativeW, self.nativeH = self._scene.sceneRect().size().width(), self._scene.sceneRect().size().height()
+
         self.makeLayout()
+
+    def changeResol(self, resButton):
+        if self.currentRes == 0:
+            self.view.scale(self.resLst[self.currentRes][0] / self.nativeW,
+                            self.resLst[self.currentRes][1] / self.nativeH)
+            resButton.changeText(str(self.resLst[self.currentRes][0]) + ' X ' + str(self.resLst[self.currentRes][1]))
+            print(self.resLst[self.currentRes][0], self.resLst[self.currentRes][1])
+            self.currentRes += 1
+
+        elif self.currentRes == len(self.resLst) - 1:
+            self.view.scale(1, 1)
+            resButton.changeText(str(int(self.nativeW)) + ' X ' + str(int(self.nativeH)))
+
+        else:
+            self.currentRes += 1
+            self.view.scale(self.resLst[self.currentRes][0] / self.nativeW,
+                            self.resLst[self.currentRes][1] / self.nativeH)
+            resButton.changeText(str(self.resLst[self.currentRes][0]) + ' X ' + str(self.resLst[self.currentRes][1]))
+            print(self.resLst[self.currentRes][0], self.resLst[self.currentRes][1])
 
     def makeLayout(self):
         back = Button('Back')
+        res = Button('')
 
         back.clicked.connect(self._scene.prevScene)
+        res.clicked.connect(lambda: self.changeResol(res))
 
         self.addItem(back, 0, 0)
+        self.addItem(res, 0, 1)
 
     def hide(self):
         super().hide()

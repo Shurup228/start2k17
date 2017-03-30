@@ -31,3 +31,7 @@ class Button(QGraphicsObject):
 
     def mousePressEvent(self, *args, **kwargs):
         self.clicked.emit()
+
+    def changeText(self, text):
+        self.__text = text
+        self.prepareGeometryChange()
