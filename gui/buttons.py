@@ -1,7 +1,6 @@
 """Buttons go here."""
 # coding=utf-8
 
-
 from PyQt5.QtWidgets import QGraphicsObject
 from PyQt5.QtCore import pyqtSignal, QRectF, Qt
 

@@ -1,7 +1,6 @@
 """Scene sets here."""
 # coding=utf-8
 
-
 from PyQt5.QtWidgets import QGraphicsScene
 from PyQt5.QtCore import QTimer
 from gui.layout import Layout
@@ -13,6 +12,7 @@ class Scene(QGraphicsScene):
     PAUSE = 'pause'
     CLEAR = 'clear'
     SAVE = 'save'
+    COMBINE = 'combine'
 
     def __init__(self, *args):
         super().__init__(*args)
@@ -32,6 +32,10 @@ class Scene(QGraphicsScene):
         except IndexError:
             return
 
+        if isinstance(currentScene, tuple):
+            for layout in currentScene:
+                layout.update()
+
         currentScene.update()
 
     def nextScene(self, layout: Layout, switchType=None):
@@ -42,11 +46,13 @@ class Scene(QGraphicsScene):
                 self.__timer.stop()
 
                 self.__sceneStack[len(self.__sceneStack) - 1].pause()
-            else:
+            elif switchType == self.SAVE:
                 self.__sceneStack[len(self.__sceneStack) - 1].hide()
-
-                if switchType != self.SAVE:
-                    self.__sceneStack.pop()
+            elif switchType == self.COMBINE:
+                curScene = self.__sceneStack.pop()
+                layout = (curScene, layout)
+            else:
+                self.__sceneStack.pop().hide()
 
         self.__sceneStack.append(layout)
         layout.show()

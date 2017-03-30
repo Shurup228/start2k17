@@ -16,13 +16,11 @@ class MainMenu(GridLayout):
 
     def makeLayout(self):
         start = Button('Start')
-        maps = Button('Choose map')
         options = Button('Options')
         exit = Button('Quit')
 
-        start.clicked.connect(lambda: print('NotImplemented'))
-        maps.clicked.connect(lambda:
-                             self.changeScene(Maps, self._scene.SAVE))
+        start.clicked.connect(lambda:
+                              self.changeScene(Maps, self._scene.SAVE))
         options.clicked.connect(lambda:
                                 self.changeScene(Options, self._scene.SAVE))
         exit.clicked.connect(quit)
@@ -30,9 +28,8 @@ class MainMenu(GridLayout):
         self.addItem(self.DUMMY, 0, 0)
         self.addItem(self.DUMMY, 0, 2)
         self.addItem(start, 0, 1)
-        self.addItem(maps, 1, 1)
-        self.addItem(options, 2, 1)
-        self.addItem(exit, 3, 1)
+        self.addItem(options, 1, 1)
+        self.addItem(exit, 2, 1)
 
 
 class Options(GridLayout):
