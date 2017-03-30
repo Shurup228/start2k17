@@ -3,6 +3,7 @@
 
 from abc import ABCMeta, abstractmethod
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsItem
+from objects.map_elements import Wall, Air
 
 
 class Layout(metaclass=ABCMeta):
@@ -101,9 +102,9 @@ class GridLayout(Layout):
                     continue
 
                 rect = item.boundingRect()
-                e = item.expand
+                e = item.expandable
 
-                if item.resizable:
+                if item.resizable or item.expandable:
                     cx, cy = rect.width() / 2, rect.height() / 2
                     rx, ry = rect.x(), rect.y()
 
@@ -148,10 +149,22 @@ class GridLayout(Layout):
 class Map(GridLayout):
     def __init__(self, scene, map):
         super().__init__(scene)
-        self.map = None
+        self.mapping = {'w': Wall, 'e': Air}
 
         self.parseMap(map)
 
-    def parseMap(self):
-        mapFile = open(map, 'r')
-        self.map = [[]]
+    def parseMap(self, mapfile):
+        mapFile = open(mapfile, 'r')
+
+        skipped = 0
+        for row, line in enumerate(mapFile):
+            if line.startswith('#'):
+                skipped += 1
+                continue
+
+            for col, sym in enumerate(line):
+                try:
+                    item = self.mapping[sym]()
+                except KeyError:
+                    continue
+                self.addItem(item, row - skipped, col)

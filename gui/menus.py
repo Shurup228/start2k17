@@ -79,9 +79,10 @@ class Maps(GridLayout):
                 col = 0
                 row += 1
 
-            button = Button(map, expand=True)
+            button = Button(map)
             button.clicked.connect(lambda:
-                                   self._scene.nextScene(Map(self._scene, map)))
+                                   self._scene.nextScene(Map(self._scene,
+                                                             'maps/' + map)))
             self.addItem(button, row, col)
 
             col += 1
