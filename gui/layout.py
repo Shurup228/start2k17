@@ -2,12 +2,13 @@
 # coding=utf-8
 
 from abc import ABCMeta, abstractmethod
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsItem
 
 
 class Layout(metaclass=ABCMeta):
     """Base layout class(For inheritance only)."""
 
-    def __init__(self, scene):
+    def __init__(self, scene: QGraphicsScene):
         self.__scene = scene
 
     @abstractmethod
@@ -18,6 +19,12 @@ class Layout(metaclass=ABCMeta):
     def hide(self):
         pass
 
+    def pause(self):
+        pass
+
+    def update(self):
+        pass
+
 
 class GridLayout(Layout):
     """Grid layout for managing simple menus."""
@@ -25,7 +32,7 @@ class GridLayout(Layout):
     # Dummy item
     DUMMY = ''
 
-    def __init__(self, scene):
+    def __init__(self, scene: QGraphicsScene):
         super().__init__(scene)
         self.__scene = scene
         self.__width, self.__height = scene.width(), scene.height()
@@ -34,7 +41,7 @@ class GridLayout(Layout):
         # items - matrix with elements
         self.items = [[]]
 
-    def addItem(self, item, row, coll):
+    def addItem(self, item: QGraphicsItem, row: int, coll: int):
         self.rows = self.rows if row + 1 <= self.rows else row + 1
         self.colls = self.colls if coll + 1 <= self.colls else coll + 1
         self.resize()
@@ -75,7 +82,21 @@ class GridLayout(Layout):
                 item.setPos(x, y)
 
     def show(self):
-        pass
+        for row in range(self.rows):
+            for coll in range(self.colls):
+                item = self.items[row][coll]
+
+                if item == self.DUMMY:
+                    continue
+
+                self.__scene.addItem(item)
 
     def hide(self):
-        pass
+        for row in range(self.rows):
+            for coll in range(self.colls):
+                item = self.items[row][coll]
+
+                if item == self.DUMMY:
+                    continue
+
+                self.__scene.removeItem(item)

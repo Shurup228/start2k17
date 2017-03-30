@@ -4,6 +4,7 @@
 
 from PyQt5.QtWidgets import QGraphicsScene
 from PyQt5.QtCore import QTimer
+from gui.layout import Layout
 
 
 class Scene(QGraphicsScene):
@@ -30,26 +31,19 @@ class Scene(QGraphicsScene):
         except IndexError:
             return
 
-        for row in range(currentScene.rows):
-            for coll in range(currentScene.colls):
-                item = currentScene.items[row][coll]
+        currentScene.update()
 
-                if item == currentScene.DUMMY:
-                    continue
+    def nextScene(self, layout: Layout, switchType=None):
+        switchType = switchType or self.CLEAR
 
-                item.update_()
+        if len(self.__sceneStack):
+            if switchType == self.PAUSE:
+                self.__timer.stop()
 
-    def nextScene(self, layout, switchType=None):
-        if not switchType:
-            switchType = self.CLEAR
-
-        if switchType == self.PAUSE:
-            self.__timer.stop()
-
-            self.__sceneStack[0].pause()
-        else:
-            self.__sceneStack[0].hide()
-            self.__sceneStack.pop()
+                self.__sceneStack[0].pause()
+            else:
+                self.__sceneStack[0].hide()
+                self.__sceneStack.pop()
 
         self.__sceneStack.append(layout)
         layout.show()
