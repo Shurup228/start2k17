@@ -23,10 +23,6 @@ class MainWindow(QWidget):
 
         self.initUI()
 
-    @property
-    def size(self):
-        return self.__size
-
     def initUI(self):
         self.setLayout(QBoxLayout(QBoxLayout.LeftToRight, self))
         self.layout().addWidget(self.__view)

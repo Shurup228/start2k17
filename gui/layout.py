@@ -51,6 +51,7 @@ class GridLayout(Layout):
         self.__width, self.__height = scene.width(), scene.height()
         self.__rectWidth, self.__rectHeight = None, None
         self.rows, self.colls = 1, 1
+        # items == [[(item, rowspan, colspan)]]
         self.items = [[]]
 
     def hasItem(self):
@@ -61,7 +62,7 @@ class GridLayout(Layout):
 
         return False
 
-    def addItem(self, item: QGraphicsItem, row, coll, rowspan=1, collspan=1):
+    def addItem(self, item: QGraphicsItem, row, coll, rowspan=1, colspan=1):
         if item != self.DUMMY:
             if not self.hasItem():
                 self.__rootItem = item
@@ -70,10 +71,10 @@ class GridLayout(Layout):
                 item.setParentItem(self.__rootItem)
 
         self.rows = self.rows if row + rowspan <= self.rows else row + 1
-        self.colls = self.colls if coll + collspan <= self.colls else coll + 1
+        self.colls = self.colls if coll + colspan <= self.colls else coll + 1
         self.resize()
 
-        self.items[row][coll] = (item, rowspan, collspan)
+        self.items[row][coll] = (item, rowspan, colspan)
         self.repaint()
 
     def resize(self):

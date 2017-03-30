@@ -50,6 +50,10 @@ class Options(GridLayout):
 
         self.addItem(back, 0, 0)
 
+    def hide(self):
+        super().hide()
+        self.view.escPressed.disconnect()
+
 
 class Maps(GridLayout):
     def __init__(self, scene):
@@ -79,3 +83,7 @@ class Maps(GridLayout):
         back = Button('Back')
         back.clicked.connect(self._scene.prevScene)
         self.addItem(back, row + 1, 1)
+
+    def hide(self):
+        super().hide()
+        self.view.escPressed.disconnect()
