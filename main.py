@@ -25,7 +25,7 @@ class MainWindow(QWidget):
         self.setLayout(QBoxLayout(QBoxLayout.LeftToRight, self))
         self.layout().addWidget(self.__view)
         self.layout().setContentsMargins(0, 0, 0, 0)
-        self.__layout = MainMenu(self.__scene)
+        self.__layout = MainMenu(self.__scene, self)
 
 
         self.setWindowFlags(Qt.CustomizeWindowHint)
