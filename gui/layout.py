@@ -1,5 +1,6 @@
 """Layout like layouts in qt(QGridLayout)."""
 # coding=utf-8
+from gui.buttons import Button
 
 
 class Layout:
@@ -58,3 +59,20 @@ class Layout:
                 y = sceneY - height / 2
 
                 item.setPos(x, y)
+
+
+class MainMenu(Layout):
+    def __init__(self, scene):
+        super().__init__(scene)
+        self.makeLayout()
+
+    def makeLayout(self):
+        startButton = Button('Start')
+        exitButton = Button('Quit')
+
+        exitButton.clicked.connect(quit)
+
+        self.addItem(startButton, 0, 0)
+        self.addItem(exitButton, 0, 1)
+
+

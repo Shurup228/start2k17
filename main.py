@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import (QWidget, QApplication, QBoxLayout,
 from PyQt5.QtCore import Qt
 from gui.scene import Scene
 from gui.view import GraphicsView
+from gui.layout import MainMenu
 
 
 class MainWindow(QWidget):
@@ -24,6 +25,8 @@ class MainWindow(QWidget):
         self.setLayout(QBoxLayout(QBoxLayout.LeftToRight, self))
         self.layout().addWidget(self.__view)
         self.layout().setContentsMargins(0, 0, 0, 0)
+        self.__layout = MainMenu(self.__scene)
+
 
         self.setWindowFlags(Qt.CustomizeWindowHint)
         self.showFullScreen()
