@@ -9,7 +9,7 @@ class Layout(metaclass=ABCMeta):
     """Base layout class(For inheritance only)."""
 
     def __init__(self, scene: QGraphicsScene):
-        self.__scene = scene
+        self._scene = scene
         # Keeps all items in layout
         self.__items = []
         # State of layout
@@ -47,7 +47,7 @@ class GridLayout(Layout):
 
     def __init__(self, scene: QGraphicsScene):
         super().__init__(scene)
-        self.__scene = scene
+        self._scene = scene
         self.__width, self.__height = scene.width(), scene.height()
         self.__rectWidth, self.__rectHeight = None, None
         self.rows, self.colls = 1, 1
@@ -118,8 +118,8 @@ class GridLayout(Layout):
 
     def show(self):
         # Here, at last, we can use the benefits of item group
-        self.__scene.addItem(self.__rootItem)
+        self._scene.addItem(self.__rootItem)
 
     def hide(self):
         # Here too
-        self.__scene.removeItem(self.__rootItem)
+        self._scene.removeItem(self.__rootItem)

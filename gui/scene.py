@@ -21,11 +21,11 @@ class Scene(QGraphicsScene):
     def initTimer(self):
         self.__timer = QTimer(self)
 
-        self.__timer.timeout.connect(self.update)
+        self.__timer.timeout.connect(self.__update)
 
         self.__timer.start(self.__TIMER_DELAY)
 
-    def update(self):
+    def __update(self):
         try:
             currentScene = self.__sceneStack[0]
         except IndexError:
