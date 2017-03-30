@@ -90,6 +90,8 @@ class GridLayout(Layout):
 
     def repaint(self):
         """Redraws all widgets after new added and matrix resized."""
+        factor = 2 / 3
+
         for row in range(self.rows):
             for coll in range(self.colls):
                 item, rspan, cspan = self.items[row][coll]
@@ -98,7 +100,22 @@ class GridLayout(Layout):
                     continue
 
                 rect = item.boundingRect()
-                width, height = rect.width(), rect.height()
+
+                if item.resizable:
+                    cx, cy = rect.width() / 2, rect.height() / 2
+                    rx, ry = rect.x(), rect.y()
+
+                    rx = cx - self.__rectWidth / 2 * factor
+                    ry = cy - self.__rectHeight / 2 * factor
+
+                    item.moveBy(rx, ry)
+
+                    width = self.__rectWidth * factor
+                    height = self.__rectHeight * factor
+
+                    item.setBoundingRect(0, 0, width, height)
+                else:
+                    width, height = rect.width(), rect.height()
 
                 # Center of scene rect in which we will place widget
                 sceneX = self.__rectWidth * coll + self.__rectWidth * cspan / 2

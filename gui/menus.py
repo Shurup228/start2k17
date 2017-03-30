@@ -41,7 +41,7 @@ class Options(GridLayout):
         self.makeLayout()
 
     def makeLayout(self):
-        back = Button('Back')
+        back = Button('Back', resizable=False)
 
         back.clicked.connect(self._scene.prevScene)
 
@@ -68,9 +68,9 @@ class Maps(GridLayout):
         self.addItem(self.DUMMY, 0, 2)
 
         for row, map in enumerate(self.maps):
-            button = Button(map)
+            button = Button(map, resizable=False)
             self.addItem(button, row, 1)
 
-        back = Button('Back')
+        back = Button('Back', resizable=False)
         back.clicked.connect(self._scene.prevScene)
         self.addItem(back, row + 1, 1)
