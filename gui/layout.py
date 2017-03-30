@@ -23,12 +23,12 @@ class Layout(metaclass=ABCMeta):
 
     @abstractmethod
     def show(self):
-        """Show all item's in layout."""
+        """Add items to scene."""
         pass
 
     @abstractmethod
     def hide(self):
-        """The same as show but hide."""
+        """Remove items from scene."""
         pass
 
     def pause(self):

@@ -12,6 +12,7 @@ class Scene(QGraphicsScene):
 
     PAUSE = 'pause'
     CLEAR = 'clear'
+    SAVE = 'save'
 
     def __init__(self, *args):
         super().__init__(*args)
@@ -40,10 +41,12 @@ class Scene(QGraphicsScene):
             if switchType == self.PAUSE:
                 self.__timer.stop()
 
-                self.__sceneStack[0].pause()
+                self.__sceneStack[len(self.__sceneStack) - 1].pause()
             else:
-                self.__sceneStack[0].hide()
-                self.__sceneStack.pop()
+                self.__sceneStack[len(self.__sceneStack) - 1].hide()
+
+                if switchType != self.SAVE:
+                    self.__sceneStack.pop()
 
         self.__sceneStack.append(layout)
         layout.show()
@@ -52,4 +55,4 @@ class Scene(QGraphicsScene):
         currentScene = self.__sceneStack.pop()
         currentScene.hide()
 
-        self.__sceneStack[0].show()
+        self.__sceneStack[len(self.__sceneStack) - 1].show()

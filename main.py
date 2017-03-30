@@ -32,7 +32,7 @@ class MainWindow(QWidget):
         self.layout().addWidget(self.__view)
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        self.__layout = MainMenu(self.__scene, self)
+        self.__layout = MainMenu(self.__scene)
         self.__scene.nextScene(self.__layout)
 
         self.setWindowFlags(Qt.CustomizeWindowHint)
