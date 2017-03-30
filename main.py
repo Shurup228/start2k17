@@ -3,11 +3,13 @@
 
 
 from sys import argv, exit
-from PyQt5.QtWidgets import (QWidget, QApplication, QBoxLayout,
-                             QDesktopWidget)
+from PyQt5.QtWidgets import (QWidget, QApplication, QBoxLayout, QDesktopWidget)
 from PyQt5.QtCore import Qt
+
 from gui.scene import Scene
 from gui.view import GraphicsView
+from gui.layout import GridLayout
+from gui.buttons import Button
 
 
 class MainWindow(QWidget):
@@ -27,6 +29,14 @@ class MainWindow(QWidget):
 
         self.setWindowFlags(Qt.CustomizeWindowHint)
         self.showFullScreen()
+
+        l = GridLayout(self.__scene)
+        for i in range(3):
+            for j in range(3):
+                b = Button(str(i) + ' ' + str(j))
+                l.addItem(b, i, j)
+
+        self.__scene.nextScene(l)
 
 
 if __name__ == '__main__':

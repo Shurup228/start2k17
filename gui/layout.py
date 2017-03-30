@@ -2,7 +2,7 @@
 # coding=utf-8
 
 from abc import ABCMeta, abstractmethod
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsItem
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsItem, QGraphicsItemGroup
 
 
 class Layout(metaclass=ABCMeta):
@@ -10,19 +10,34 @@ class Layout(metaclass=ABCMeta):
 
     def __init__(self, scene: QGraphicsScene):
         self.__scene = scene
+        # Keeps all items in layout
+        self.__items = []
+        # State of layout
+        self.__pause = False
+        # Parent item for group
+        self.__rootItem = None
+        # For managing and perfomance purpouses
+        self.__group = None
+
+    @abstractmethod
+    def addItem(self):
+        pass
 
     @abstractmethod
     def show(self):
+        """Show all item's in layout."""
         pass
 
     @abstractmethod
     def hide(self):
+        """The same as show but hide."""
         pass
 
     def pause(self):
         pass
 
     def update(self):
+        """Updates all items in layout."""
         pass
 
 
@@ -38,10 +53,15 @@ class GridLayout(Layout):
         self.__width, self.__height = scene.width(), scene.height()
         self.__rectWidth, self.__rectHeight = None, None
         self.rows, self.colls = 1, 1
-        # items - matrix with elements
         self.items = [[]]
 
     def addItem(self, item: QGraphicsItem, row: int, coll: int):
+        if self.items == [[]]:
+            self.__rootItem = item
+            self.__group = QGraphicsItemGroup(item)
+        else:
+            self.__group.addToGroup(item)
+
         self.rows = self.rows if row + 1 <= self.rows else row + 1
         self.colls = self.colls if coll + 1 <= self.colls else coll + 1
         self.resize()
@@ -73,30 +93,26 @@ class GridLayout(Layout):
                 rect = item.boundingRect()
                 width, height = rect.width(), rect.height()
 
+                # Center of scene rect in which we will place widget
                 sceneX = self.__rectWidth * coll + self.__rectWidth / 2
-                x = sceneX - width / 2
-
                 sceneY = self.__rectHeight * row + self.__rectHeight / 2
+
+                # Center of widget bounding rect
+                x = sceneX - width / 2
                 y = sceneY - height / 2
+
+                # We need to shift item coords because of itemGroup
+                # Fucking itemGroup in qt shifts all coords by parent coords
+                # FUCK!!
+                x = x - self.__rootItem.x() if item != self.__rootItem else x
+                y = y - self.__rootItem.y() if item != self.__rootItem else y
 
                 item.setPos(x, y)
 
     def show(self):
-        for row in range(self.rows):
-            for coll in range(self.colls):
-                item = self.items[row][coll]
-
-                if item == self.DUMMY:
-                    continue
-
-                self.__scene.addItem(item)
+        # Here, at last, we can use the benefits of item group
+        self.__scene.addItem(self.__rootItem)
 
     def hide(self):
-        for row in range(self.rows):
-            for coll in range(self.colls):
-                item = self.items[row][coll]
-
-                if item == self.DUMMY:
-                    continue
-
-                self.__scene.removeItem(item)
+        # Here too
+        self.__scene.removeItem(self.__rootItem)

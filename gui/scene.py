@@ -49,4 +49,7 @@ class Scene(QGraphicsScene):
         layout.show()
 
     def prevScene(self):
-        pass
+        currentScene = self.__sceneStack.pop()
+        currentScene.hide()
+
+        self.__sceneStack[0].show()
