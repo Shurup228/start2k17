@@ -23,4 +23,5 @@ class Button(QGraphicsObject):
         QPainter.drawRect(self.boundingRect())
 
     def mousePressEvent(self, *args, **kwargs):
+        super().mousePressEvent(*args, **kwargs)
         self.clicked.emit()
