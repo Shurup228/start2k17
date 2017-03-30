@@ -2,7 +2,7 @@
 # coding=utf-8
 
 
-from PyQt5.QtWidgets import (QGraphicsRectItem)
+from PyQt5.QtWidgets import QGraphicsRectItem
 
 
 class Button(QGraphicsRectItem):

@@ -1,17 +1,35 @@
 """Layout like layouts in qt(QGridLayout)."""
 # coding=utf-8
 
+from abc import ABCMeta, abstractmethod
 
-class Layout:
+
+class Layout(metaclass=ABCMeta):
+    """Base layout class(For inheritance only)."""
+
+    def __init__(self, scene):
+        self.__scene = scene
+
+    @abstractmethod
+    def show(self):
+        pass
+
+    @abstractmethod
+    def hide(self):
+        pass
+
+
+class GridLayout(Layout):
     """Grid layout for managing simple menus."""
 
     # Dummy item
     DUMMY = ''
 
     def __init__(self, scene):
+        super().__init__(scene)
         self.__scene = scene
-        self.width, self.height = scene.width(), scene.height()
-        self.rectWidth, self.rectHeight = None, None
+        self.__width, self.__height = scene.width(), scene.height()
+        self.__rectWidth, self.__rectHeight = None, None
         self.rows, self.colls = 1, 1
         # items - matrix with elements
         self.items = [[]]
@@ -20,9 +38,6 @@ class Layout:
         self.rows = self.rows if row + 1 <= self.rows else row + 1
         self.colls = self.colls if coll + 1 <= self.colls else coll + 1
         self.resize()
-
-        if item != self.DUMMY:
-            self.__scene.addItem(item)
 
         self.items[row][coll] = item
         self.repaint()
@@ -36,8 +51,8 @@ class Layout:
             for y in range(self.colls - len(self.items[row])):
                 self.items[row].append(self.DUMMY)
 
-        self.rectWidth = self.width / self.colls
-        self.rectHeight = self.height / self.rows
+        self.__rectWidth = self.__width / self.colls
+        self.__rectHeight = self.__height / self.rows
 
     def repaint(self):
         """Redraws all widgets after new added and matrix resized."""
@@ -51,10 +66,16 @@ class Layout:
                 rect = item.boundingRect()
                 width, height = rect.width(), rect.height()
 
-                sceneX = self.rectWidth * coll + self.rectWidth / 2
+                sceneX = self.__rectWidth * coll + self.__rectWidth / 2
                 x = sceneX - width / 2
 
-                sceneY = self.rectHeight * row + self.rectHeight / 2
+                sceneY = self.__rectHeight * row + self.__rectHeight / 2
                 y = sceneY - height / 2
 
                 item.setPos(x, y)
+
+    def show(self):
+        pass
+
+    def hide(self):
+        pass

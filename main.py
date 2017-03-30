@@ -8,6 +8,8 @@ from PyQt5.QtWidgets import (QWidget, QApplication, QBoxLayout,
 from PyQt5.QtCore import Qt
 from gui.scene import Scene
 from gui.view import GraphicsView
+from gui.layout import GridLayout
+from gui.buttons import Button
 
 
 class MainWindow(QWidget):
