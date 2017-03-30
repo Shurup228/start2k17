@@ -8,35 +8,35 @@ from PyQt5.QtCore import Qt
 
 from gui.scene import Scene
 from gui.view import GraphicsView
-from gui.layout import GridLayout
-from gui.buttons import Button
+from gui.menus import MainMenu
 
 
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
+
+        self.resMode = 0
+
         self.__size = QDesktopWidget().size()
         self.__scene = Scene(0, 0, self.__size.width(), self.__size.height())
-
         self.__view = GraphicsView(self.__scene, self)
 
         self.initUI()
+
+    @property
+    def size(self):
+        return self.__size
 
     def initUI(self):
         self.setLayout(QBoxLayout(QBoxLayout.LeftToRight, self))
         self.layout().addWidget(self.__view)
         self.layout().setContentsMargins(0, 0, 0, 0)
 
+        self.__layout = MainMenu(self.__scene, self)
+        self.__scene.nextScene(self.__layout)
+
         self.setWindowFlags(Qt.CustomizeWindowHint)
         self.showFullScreen()
-
-        l = GridLayout(self.__scene)
-        for i in range(3):
-            for j in range(3):
-                b = Button(str(i) + ' ' + str(j))
-                l.addItem(b, i, j)
-
-        self.__scene.nextScene(l)
 
 
 if __name__ == '__main__':

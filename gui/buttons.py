@@ -2,28 +2,25 @@
 # coding=utf-8
 
 
-from PyQt5.QtWidgets import QGraphicsRectItem
+from PyQt5.QtWidgets import QGraphicsObject
+from PyQt5.QtCore import pyqtSignal, QRectF
 
 
-class Button(QGraphicsRectItem):
+class Button(QGraphicsObject):
+    clicked = pyqtSignal()
+
     def __init__(self, text, x=0, y=0, width=300, height=100):
-        super().__init__(x, y, width, height)
+        super().__init__()
+        self._x, self._y = x, y
+        self.width, self.height = width, height
         self.__text = text
+
+    def boundingRect(self):
+        return QRectF(self._x, self._y, self.width, self.height)
 
     def paint(self, QPainter, QStyleOptionGraphicsItem, widget=None):
         QPainter.drawText(self.boundingRect().center(), self.__text)
         QPainter.drawRect(self.boundingRect())
 
-
-class ExitButton(Button):
-
     def mousePressEvent(self, *args, **kwargs):
-        super().mousePressEvent(*args, **kwargs)
-        return quit()
-
-
-class StartGame(Button):
-
-    def mousePressEvent(self, *args, **kwargs):
-        super().mousePressEvent(*args, **kwargs)
-        return None
+        self.clicked.emit()

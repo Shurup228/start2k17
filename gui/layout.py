@@ -2,7 +2,7 @@
 # coding=utf-8
 
 from abc import ABCMeta, abstractmethod
-from PyQt5.QtWidgets import QGraphicsScene, QGraphicsItem, QGraphicsItemGroup
+from PyQt5.QtWidgets import QGraphicsScene, QGraphicsItem
 
 
 class Layout(metaclass=ABCMeta):
@@ -16,8 +16,6 @@ class Layout(metaclass=ABCMeta):
         self.__pause = False
         # Parent item for group
         self.__rootItem = None
-        # For managing and perfomance purpouses
-        self.__group = None
 
     @abstractmethod
     def addItem(self):
@@ -55,12 +53,21 @@ class GridLayout(Layout):
         self.rows, self.colls = 1, 1
         self.items = [[]]
 
+    def hasItem(self):
+        for row in self.items:
+            for item in row:
+                if item != self.DUMMY:
+                    return True
+
+        return False
+
     def addItem(self, item: QGraphicsItem, row: int, coll: int):
-        if self.items == [[]]:
-            self.__rootItem = item
-            self.__group = QGraphicsItemGroup(item)
-        else:
-            self.__group.addToGroup(item)
+        if item != self.DUMMY:
+            if not self.hasItem():
+                self.__rootItem = item
+                self.__rootItem.setParentItem(None)
+            else:
+                item.setParentItem(self.__rootItem)
 
         self.rows = self.rows if row + 1 <= self.rows else row + 1
         self.colls = self.colls if coll + 1 <= self.colls else coll + 1
