@@ -90,7 +90,7 @@ class GridLayout(Layout):
 
     def repaint(self):
         """Redraws all widgets after new added and matrix resized."""
-        factor = 2 / 3
+        from math import sqrt
 
         for row in range(self.rows):
             for coll in range(self.colls):
@@ -105,13 +105,13 @@ class GridLayout(Layout):
                     cx, cy = rect.width() / 2, rect.height() / 2
                     rx, ry = rect.x(), rect.y()
 
-                    rx = cx - self.__rectWidth / 2 * factor
-                    ry = cy - self.__rectHeight / 2 * factor
+                    rx = cx - sqrt(self.__rectWidth) * 3.5  # / 2
+                    ry = cy - sqrt(self.__rectHeight) * 2  # / 2
 
                     item.moveBy(rx, ry)
 
-                    width = self.__rectWidth * factor
-                    height = self.__rectHeight * factor
+                    width = sqrt(self.__rectWidth) * 7
+                    height = sqrt(self.__rectHeight) * 4
 
                     item.setBoundingRect(0, 0, width, height)
                 else:

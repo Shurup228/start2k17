@@ -3,7 +3,7 @@
 
 
 from PyQt5.QtWidgets import QGraphicsObject
-from PyQt5.QtCore import pyqtSignal, QRectF
+from PyQt5.QtCore import pyqtSignal, QRectF, Qt
 
 
 class Button(QGraphicsObject):
@@ -26,9 +26,8 @@ class Button(QGraphicsObject):
 
     def paint(self, painter, style=None, widget=None):
         painter.eraseRect(self.boundingRect())
-        painter.drawText(self.boundingRect().center(), self.__text)
+        painter.drawText(self.boundingRect(), Qt.AlignCenter, self.__text)
         painter.drawRect(self.boundingRect())
 
     def mousePressEvent(self, *args, **kwargs):
-        super().mousePressEvent(*args, **kwargs)
         self.clicked.emit()
