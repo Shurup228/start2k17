@@ -55,13 +55,13 @@ class GridLayout(Layout):
 
     def hasItem(self):
         for row in self.items:
-            for item in row:
+            for item, _, _ in row:
                 if item != self.DUMMY:
                     return True
 
         return False
 
-    def addItem(self, item: QGraphicsItem, row: int, coll: int):
+    def addItem(self, item: QGraphicsItem, row, coll, rowspan=1, collspan=1):
         if item != self.DUMMY:
             if not self.hasItem():
                 self.__rootItem = item
@@ -69,11 +69,11 @@ class GridLayout(Layout):
             else:
                 item.setParentItem(self.__rootItem)
 
-        self.rows = self.rows if row + 1 <= self.rows else row + 1
-        self.colls = self.colls if coll + 1 <= self.colls else coll + 1
+        self.rows = self.rows if row + rowspan <= self.rows else row + 1
+        self.colls = self.colls if coll + collspan <= self.colls else coll + 1
         self.resize()
 
-        self.items[row][coll] = item
+        self.items[row][coll] = (item, rowspan, collspan)
         self.repaint()
 
     def resize(self):
@@ -83,7 +83,7 @@ class GridLayout(Layout):
 
         for row in range(len(self.items)):
             for y in range(self.colls - len(self.items[row])):
-                self.items[row].append(self.DUMMY)
+                self.items[row].append((self.DUMMY, 1, 1))
 
         self.__rectWidth = self.__width / self.colls
         self.__rectHeight = self.__height / self.rows
@@ -92,7 +92,7 @@ class GridLayout(Layout):
         """Redraws all widgets after new added and matrix resized."""
         for row in range(self.rows):
             for coll in range(self.colls):
-                item = self.items[row][coll]
+                item, rspan, cspan = self.items[row][coll]
 
                 if item == self.DUMMY:
                     continue
@@ -101,8 +101,9 @@ class GridLayout(Layout):
                 width, height = rect.width(), rect.height()
 
                 # Center of scene rect in which we will place widget
-                sceneX = self.__rectWidth * coll + self.__rectWidth / 2
-                sceneY = self.__rectHeight * row + self.__rectHeight / 2
+                sceneX = self.__rectWidth * coll + self.__rectWidth * cspan / 2
+                sceneY = (self.__rectHeight * row +
+                          self.__rectHeight * rspan / 2)
 
                 # Center of widget bounding rect
                 x = sceneX - width / 2
