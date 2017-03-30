@@ -28,7 +28,7 @@ class Scene(QGraphicsScene):
 
     def __update(self):
         try:
-            currentScene = self.__sceneStack[0]
+            currentScene = self.__sceneStack[len(self.__sceneStack) - 1]
         except IndexError:
             return
 

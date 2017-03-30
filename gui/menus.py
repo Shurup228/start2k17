@@ -38,6 +38,9 @@ class MainMenu(GridLayout):
 class Options(GridLayout):
     def __init__(self, scene):
         super().__init__(scene)
+        self.view = self._scene.views()[0]
+        self.view.escPressed.connect(self._scene.prevScene)
+
         self.makeLayout()
 
     def makeLayout(self):
@@ -53,12 +56,14 @@ class Maps(GridLayout):
         super().__init__(scene)
         # List with maps
         self.maps = None
+        self.view = self._scene.views()[0]
+        self.view.escPressed.connect(self._scene.prevScene)
 
         self.makeLayout()
 
     def getMaps(self):
         from os import listdir
-        self.maps = [map for map in listdir('maps')]
+        self.maps = [map for map in listdir('maps') if map.endswith('.map')]
 
     def makeLayout(self):
         self.getMaps()
