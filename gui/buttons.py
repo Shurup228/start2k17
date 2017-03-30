@@ -8,12 +8,14 @@ from PyQt5.QtCore import pyqtSignal, QRectF, Qt
 class Button(QGraphicsObject):
     clicked = pyqtSignal()
 
-    def __init__(self, text, x=0, y=0, width=300, height=100, resizable=True):
+    def __init__(self, text, x=0, y=0, width=300, height=100, resizable=True,
+                 expand=False):
         super().__init__()
         self._x, self._y = x, y
         self.width, self.height = width, height
         self.__text = text
         self.resizable = resizable
+        self.expand = expand
 
     def setBoundingRect(self, x, y, width, height):
         self._x, self._y = x, y

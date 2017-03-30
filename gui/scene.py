@@ -28,7 +28,7 @@ class Scene(QGraphicsScene):
 
     def __update(self):
         try:
-            currentScene = self.__sceneStack[len(self.__sceneStack) - 1]
+            currentScene = self.__sceneStack[-1]
         except IndexError:
             return
 
@@ -45,9 +45,9 @@ class Scene(QGraphicsScene):
             if switchType == self.PAUSE:
                 self.__timer.stop()
 
-                self.__sceneStack[len(self.__sceneStack) - 1].pause()
+                self.__sceneStack[-1].pause()
             elif switchType == self.SAVE:
-                self.__sceneStack[len(self.__sceneStack) - 1].hide()
+                self.__sceneStack[-1].hide()
             elif switchType == self.COMBINE:
                 curScene = self.__sceneStack.pop()
                 layout = (curScene, layout)
@@ -61,4 +61,4 @@ class Scene(QGraphicsScene):
         currentScene = self.__sceneStack.pop()
         currentScene.hide()
 
-        self.__sceneStack[len(self.__sceneStack) - 1].show()
+        self.__sceneStack[-1].show()

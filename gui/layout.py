@@ -101,18 +101,19 @@ class GridLayout(Layout):
                     continue
 
                 rect = item.boundingRect()
+                e = item.expand
 
                 if item.resizable:
                     cx, cy = rect.width() / 2, rect.height() / 2
                     rx, ry = rect.x(), rect.y()
 
-                    rx = cx - sqrt(self.__rectWidth) * 3.5  # / 2
-                    ry = cy - sqrt(self.__rectHeight) * 2  # / 2
+                    rx = cx - self.__rectWidth if e else cx - sqrt(self.__rectWidth) * 3.5
+                    ry = cy - self.__rectHeight / 2 if e else cy - sqrt(self.__rectHeight) * 2
 
                     item.moveBy(rx, ry)
 
-                    width = sqrt(self.__rectWidth) * 7
-                    height = sqrt(self.__rectHeight) * 4
+                    width = self.__rectWidth if e else sqrt(self.__rectWidth) * 7
+                    height = self.__rectHeight if e else sqrt(self.__rectHeight) * 4
 
                     item.setBoundingRect(0, 0, width, height)
                 else:
@@ -142,3 +143,15 @@ class GridLayout(Layout):
     def hide(self):
         # Here too
         self._scene.removeItem(self.__rootItem)
+
+
+class Map(GridLayout):
+    def __init__(self, scene, map):
+        super().__init__(scene)
+        self.map = None
+
+        self.parseMap(map)
+
+    def parseMap(self):
+        mapFile = open(map, 'r')
+        self.map = [[]]

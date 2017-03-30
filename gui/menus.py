@@ -1,7 +1,7 @@
 """Menus for game."""
 # coding=utf-8
 
-from gui.layout import GridLayout, Layout
+from gui.layout import GridLayout, Layout, Map
 from gui.buttons import Button
 
 
@@ -79,7 +79,9 @@ class Maps(GridLayout):
                 col = 0
                 row += 1
 
-            button = Button(map)
+            button = Button(map, expand=True)
+            button.clicked.connect(lambda:
+                                   self._scene.nextScene(Map(self._scene, map)))
             self.addItem(button, row, col)
 
             col += 1
