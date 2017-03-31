@@ -19,9 +19,8 @@ class Layout(metaclass=ABCMeta):
         self._scene = scene
         self._view = scene.views()[0]
         # State of layout
-        self.__pause = False
-        # Parent item for grouping
-        self.__rootItem = None
+        self._pause = False
+        # Parent item for grouping self._rootItem = None
 
     @abstractmethod
     def addItem(self):
@@ -58,6 +57,9 @@ class Layout(metaclass=ABCMeta):
         self.repaint()
 
     def pause(self):
+        pass
+
+    def resume(self):
         pass
 
     def update(self):
@@ -98,10 +100,10 @@ class GridLayout(Layout):
     def addItem(self, item: QGraphicsItem, row, coll, rowspan=1, colspan=1):
         if item != self.DUMMY:
             if not self.hasItem():
-                self.__rootItem = item
-                self.__rootItem.setParentItem(None)
+                self._rootItem = item
+                self._rootItem.setParentItem(None)
             else:
-                item.setParentItem(self.__rootItem)
+                item.setParentItem(self._rootItem)
 
         self.rows = self.rows if row + rowspan <= self.rows else row + 1
         self.colls = self.colls if coll + colspan <= self.colls else coll + 1
@@ -162,18 +164,18 @@ class GridLayout(Layout):
                 # We need to shift item coords because of itemGroup
                 # Fucking itemGroup in qt shifts all coords by parent coords
                 # FUCK!!
-                x = x - self.__rootItem.x() if item != self.__rootItem else x
-                y = y - self.__rootItem.y() if item != self.__rootItem else y
+                x = x - self._rootItem.x() if item != self._rootItem else x
+                y = y - self._rootItem.y() if item != self._rootItem else y
 
                 item.setPos(x, y)
 
     def show(self):
         # Here, at last, we can use the benefits of item group
-        self._scene.addItem(self.__rootItem)
+        self._scene.addItem(self._rootItem)
 
     def hide(self):
         # Here too
-        self._scene.removeItem(self.__rootItem)
+        self._scene.removeItem(self._rootItem)
 
 
 class Map(GridLayout):
@@ -183,7 +185,15 @@ class Map(GridLayout):
     def __init__(self, scene, map):
         super().__init__(scene)
 
+        self._view.escPressed.connect(self.openMenu)
+
         self.parseMap(map)
+
+    def openMenu(self):
+        from gui.menus import InGameMenu
+
+        menu = InGameMenu(self._scene)
+        self._scene.nextLayout(menu, self._scene.PAUSE)
 
     def parseMap(self, mapfile):
         mapFile = open(mapfile, 'r')
@@ -201,3 +211,13 @@ class Map(GridLayout):
                 except KeyError:
                     continue
                 self.addItem(item, row - skipped, col)
+
+    def pause(self):
+        super().pause()
+
+        self._rootItem.setOpacity(0.2)
+
+    def resume(self):
+        super().resume()
+
+        self._rootItem.setOpacity(1)

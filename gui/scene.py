@@ -3,7 +3,6 @@
 
 from PyQt5.QtWidgets import QGraphicsScene
 from PyQt5.QtCore import QTimer
-from gui.layout import Layout
 
 
 class Scene(QGraphicsScene):
@@ -16,7 +15,12 @@ class Scene(QGraphicsScene):
 
     def __init__(self, *args):
         super().__init__(*args)
+        # Layout buffer
         self.__sceneStack = []
+        # Show when game on pause
+        self.__paused = False
+        self.__timer = None
+
         self.initTimer()
 
     @property
@@ -56,12 +60,21 @@ class Scene(QGraphicsScene):
 
             layout.prepareGeometry()
 
-    def nextScene(self, layout: Layout, switchType=None):
+    def clearBuffer(self):
+        for layout in self.__sceneStack:
+            if isinstance(layout, tuple):
+                for _layout in layout:
+                    _layout.hide()
+            layout.hide()
+
+    def nextLayout(self, layout, switchType=None):
         switchType = switchType or self.CLEAR
 
         if len(self.__sceneStack):
             if switchType == self.PAUSE:
                 self.__timer.stop()
+
+                self.__paused = True
 
                 self.__sceneStack[-1].pause()
             elif switchType == self.SAVE:
@@ -70,13 +83,22 @@ class Scene(QGraphicsScene):
                 curScene = self.__sceneStack.pop()
                 layout = (curScene, layout)
             else:
-                self.__sceneStack.pop().hide()
+                try:
+                    self.__sceneStack.pop().hide()
+                except IndexError:
+                    pass
 
         self.__sceneStack.append(layout)
         layout.show()
 
-    def prevScene(self):
+    def prevLayout(self):
         currentScene = self.__sceneStack.pop()
         currentScene.hide()
 
-        self.__sceneStack[-1].show()
+        if self.__paused:
+            self.__paused = False
+            self.__timer.start()
+
+            self.__sceneStack[-1].resume()
+        else:
+            self.__sceneStack[-1].show()

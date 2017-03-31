@@ -1,7 +1,7 @@
 """Menus for game."""
 # coding=utf-8
 
-from gui.layout import GridLayout, Layout, Map
+from gui.layout import GridLayout, Map
 from gui.buttons import Button
 
 
@@ -10,9 +10,9 @@ class MainMenu(GridLayout):
         super().__init__(scene)
         self.makeLayout()
 
-    def changeScene(self, scene: Layout, switchType):
+    def changeScene(self, scene, switchType):
         layout = scene(self._scene)
-        self._scene.nextScene(layout, switchType)
+        self._scene.nextLayout(layout, switchType)
 
     def makeLayout(self):
         start = Button('Start')
@@ -36,7 +36,7 @@ class Options(GridLayout):
     def __init__(self, scene):
         super().__init__(scene)
 
-        self._view.escPressed.connect(self._scene.prevScene)
+        self._view.escPressed.connect(self._scene.prevLayout)
         self.makeLayout()
 
     def changeResolution(self, button):
@@ -59,14 +59,14 @@ class Options(GridLayout):
         back = Button('Back')
 
         res.clicked.connect(lambda: self.changeResolution(res))
-        back.clicked.connect(self._scene.prevScene)
+        back.clicked.connect(self._scene.prevLayout)
 
         self.addItem(res, 0, 0)
         self.addItem(back, 1, 0)
 
     def hide(self):
         super().hide()
-        self._view.escPressed.disconnect()
+        self._view.escPressed.disconnect(self._scene.prevLayout)
 
 
 class Maps(GridLayout):
@@ -75,7 +75,7 @@ class Maps(GridLayout):
         # List with maps
         self.maps = None
 
-        self._view.escPressed.connect(self._scene.prevScene)
+        self._view.escPressed.connect(self._scene.prevLayout)
         self.makeLayout()
 
     def getMaps(self):
@@ -93,16 +93,49 @@ class Maps(GridLayout):
 
             button = Button(map)
             button.clicked.connect(lambda map=map:
-                                   self._scene.nextScene(Map(self._scene,
-                                                             'maps/' + map)))
+                                   self._scene.nextLayout(Map(self._scene,
+                                                              'maps/' + map)))
             self.addItem(button, row, col)
 
             col += 1
 
         back = Button('Back')
-        back.clicked.connect(self._scene.prevScene)
+        back.clicked.connect(self._scene.prevLayout)
         self.addItem(back, row + 1, col - 1)
 
     def hide(self):
         super().hide()
-        self._view.escPressed.disconnect()
+        self._view.escPressed.disconnect(self._scene.prevLayout)
+
+
+class InGameMenu(GridLayout):
+    def __init__(self, scene):
+        super().__init__(scene)
+        self.makeLayout()
+
+    def mainMenu(self):
+        self._scene.clearBuffer()
+
+        menu = MainMenu(self._scene)
+        self._scene.nextLayout(menu)
+
+    def makeLayout(self):
+        mainMenu = Button('Main Menu')
+        resume = Button('Resume')
+        exit = Button('Exit')
+
+        mainMenu.clicked.connect(self.mainMenu)
+        self._view.escPressed.connect(self._scene.prevLayout)
+        resume.clicked.connect(self._scene.prevLayout)
+        exit.clicked.connect(quit)
+
+        self.addItem(self.DUMMY, 0, 0)
+        self.addItem(self.DUMMY, 0, 2)
+        self.addItem(resume, 0, 1)
+        self.addItem(mainMenu, 1, 1)
+        self.addItem(exit, 2, 1)
+
+    def hide(self):
+        super().hide()
+
+        self._view.escPressed.disconnect(self._scene.prevLayout)
