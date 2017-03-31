@@ -30,8 +30,9 @@ class Button(QGraphicsObject):
         painter.drawText(self.boundingRect(), Qt.AlignCenter, self.__text)
         painter.drawRect(self.boundingRect())
 
-    def mousePressEvent(self, *args, **kwargs):
-        self.clicked.emit()
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.clicked.emit()
 
     def changeText(self, text):
         self.__text = text
