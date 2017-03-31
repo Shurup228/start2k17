@@ -38,18 +38,17 @@ class MainMenu(GridLayout):
 class Options(GridLayout):
     def __init__(self, scene):
         super().__init__(scene)
-        self.view = self._scene.views()[0]
-        self.view.escPressed.connect(self._scene.prevScene)
 
+        self._view.escPressed.connect(self._scene.prevScene)
         self.makeLayout()
 
     def changeResolution(self, button):
-        res = next(self.view.resolution)
+        res = next(self._view.resolution)
 
         button.changeText('{} x {}'.format(*res))
 
     def makeLayout(self):
-        res = next(self.view.resolution)
+        res = next(self._view.resolution)
 
         res = Button('{} x {}'.format(*res))
         back = Button('Back')
@@ -62,7 +61,7 @@ class Options(GridLayout):
 
     def hide(self):
         super().hide()
-        self.view.escPressed.disconnect()
+        self._view.escPressed.disconnect()
 
 
 class Maps(GridLayout):
@@ -70,9 +69,8 @@ class Maps(GridLayout):
         super().__init__(scene)
         # List with maps
         self.maps = None
-        self.view = self._scene.views()[0]
-        self.view.escPressed.connect(self._scene.prevScene)
 
+        self._view.escPressed.connect(self._scene.prevScene)
         self.makeLayout()
 
     def getMaps(self):
@@ -96,4 +94,4 @@ class Maps(GridLayout):
 
     def hide(self):
         super().hide()
-        self.view.escPressed.disconnect()
+        self._view.escPressed.disconnect()

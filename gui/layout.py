@@ -10,6 +10,9 @@ class Layout(metaclass=ABCMeta):
 
     def __init__(self, scene: QGraphicsScene):
         self._scene = scene
+        self._view = scene.views()[0]
+
+        self._width, self._height = self._view.width(), self._view.height()
         # Keeps all items in layout
         self.__items = []
         # State of layout
@@ -31,6 +34,9 @@ class Layout(metaclass=ABCMeta):
         """Remove items from scene."""
         pass
 
+    def prepareGeometry(self):
+        self._width, self._height = self._view.widht(), self._view.height()
+
     def pause(self):
         pass
 
@@ -48,11 +54,14 @@ class GridLayout(Layout):
     def __init__(self, scene: QGraphicsScene):
         super().__init__(scene)
         self._scene = scene
-        self.__width, self.__height = scene.width(), scene.height()
+
         self.__rectWidth, self.__rectHeight = None, None
+
         self.rows, self.colls = 1, 1
         # items == [[(item, rowspan, colspan)]]
         self.items = [[]]
+        print(self._width, self._height)
+        print(self._view.sceneRect())
 
     def hasItem(self):
         for row in self.items:
@@ -86,8 +95,8 @@ class GridLayout(Layout):
             for y in range(self.colls - len(self.items[row])):
                 self.items[row].append((self.DUMMY, 1, 1))
 
-        self.__rectWidth = self.__width / self.colls
-        self.__rectHeight = self.__height / self.rows
+        self.__rectWidth = self._width / self.colls
+        self.__rectHeight = self._height / self.rows
 
     def repaint(self):
         """Redraws all widgets after new added and matrix resized."""
