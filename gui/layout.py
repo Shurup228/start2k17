@@ -3,6 +3,7 @@
 
 from abc import ABCMeta, abstractmethod
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsItem
+from objects.map_elements import Wall, Air
 
 
 class Layout(metaclass=ABCMeta):
@@ -110,18 +111,19 @@ class GridLayout(Layout):
                     continue
 
                 rect = item.boundingRect()
+                e = item.expandable
 
-                if item.resizable:
+                if item.resizable or item.expandable:
                     cx, cy = rect.width() / 2, rect.height() / 2
                     rx, ry = rect.x(), rect.y()
 
-                    rx = cx - sqrt(self.__rectWidth) * 3.5  # / 2
-                    ry = cy - sqrt(self.__rectHeight) * 2  # / 2
+                    rx = cx - self.__rectWidth if e else cx - sqrt(self.__rectWidth) * 3.5
+                    ry = cy - self.__rectHeight / 2 if e else cy - sqrt(self.__rectHeight) * 2
 
                     item.moveBy(rx, ry)
 
-                    width = sqrt(self.__rectWidth) * 7
-                    height = sqrt(self.__rectHeight) * 4
+                    width = self.__rectWidth if e else sqrt(self.__rectWidth) * 7
+                    height = self.__rectHeight if e else sqrt(self.__rectHeight) * 4
 
                     item.setBoundingRect(0, 0, width, height)
                 else:
@@ -151,3 +153,27 @@ class GridLayout(Layout):
     def hide(self):
         # Here too
         self._scene.removeItem(self.__rootItem)
+
+
+class Map(GridLayout):
+    def __init__(self, scene, map):
+        super().__init__(scene)
+        self.mapping = {'w': Wall, 'e': Air}
+
+        self.parseMap(map)
+
+    def parseMap(self, mapfile):
+        mapFile = open(mapfile, 'r')
+
+        skipped = 0
+        for row, line in enumerate(mapFile):
+            if line.startswith('#'):
+                skipped += 1
+                continue
+
+            for col, sym in enumerate(line):
+                try:
+                    item = self.mapping[sym]()
+                except KeyError:
+                    continue
+                self.addItem(item, row - skipped, col)
