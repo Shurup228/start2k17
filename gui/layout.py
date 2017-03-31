@@ -65,7 +65,6 @@ class Layout(metaclass=ABCMeta):
 
         Not needed in menu, for entity layouts.
         """
-        self.resize()
         self.repaint()
 
 
@@ -86,6 +85,13 @@ class GridLayout(Layout):
         self.items = [[]]
         # Initialization of width and height
         self.prepareGeometry()
+
+    def prepareGeometry(self):
+        self._width, self._height = self._view.resolution
+        self._scene.setSceneRect(0, 0, *self._view.resolution)
+
+        self.resize()
+        self.update()
 
     def hasItem(self):
         """Checks, whether items list has items or not."""
