@@ -28,8 +28,7 @@ class MainWindow(QWidget):
         self.layout().addWidget(self.__view)
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        self.__layout = MainMenu(self.__scene)
-        self.__scene.nextLayout(self.__layout)
+        self.__scene.nextLayout(MainMenu)
 
         self.setWindowFlags(Qt.CustomizeWindowHint)
         self.showFullScreen()

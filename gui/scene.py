@@ -5,6 +5,26 @@ from PyQt5.QtWidgets import QGraphicsScene
 from PyQt5.QtCore import QTimer
 
 
+class Wrapper:
+    """Helper for scene combined mode."""
+
+    def __init__(self, *layouts):
+        self.layouts = [*layouts]
+
+        functions = ['pause', 'show', 'hide', 'resume', 'resize', 'repaint',
+                     'update', 'prepareGeomety']
+        for func in functions:
+            f = lambda: self.forEach(func)
+            setattr(self, func, f)
+
+    def addLayout(self, layout):
+        self.layouts.append(layout)
+
+    def forEach(self, funcName: str):
+        for layout in self.layouts:
+            getattr(layout, funcName)()
+
+
 class Scene(QGraphicsScene):
     __TIMER_DELAY = 20
 
@@ -41,11 +61,6 @@ class Scene(QGraphicsScene):
         except IndexError:
             return
 
-        # If this is game layout, update all
-        if isinstance(currentScene, tuple):
-            for layout in currentScene:
-                layout.update()
-
         currentScene.update()
 
     def resizeLayouts(self):
@@ -54,39 +69,36 @@ class Scene(QGraphicsScene):
         Primarily used when resolution changed =)
         """
         for layout in self.__sceneStack:
-            if isinstance(layout, tuple):
-                    for _layout in layout:
-                        _layout.prepareGeometry()
-
             layout.prepareGeometry()
 
-    def clearBuffer(self):
+    def clear(self):
         for layout in self.__sceneStack:
-            if isinstance(layout, tuple):
-                for _layout in layout:
-                    _layout.hide()
             layout.hide()
 
-    def nextLayout(self, layout, switchType=None):
-        switchType = switchType or self.CLEAR
+        self.__sceneStack.clear()
+
+    def nextLayout(self, layout, *args, type_=None):
+        type_ = type_ or self.CLEAR
+        layout = layout(self, *args)
 
         if len(self.__sceneStack):
-            if switchType == self.PAUSE:
+            if type_ == self.PAUSE:
                 self.__timer.stop()
 
                 self.__paused = True
 
                 self.__sceneStack[-1].pause()
-            elif switchType == self.SAVE:
+            elif type_ == self.SAVE:
                 self.__sceneStack[-1].hide()
-            elif switchType == self.COMBINE:
+            elif type_ == self.COMBINE:
                 curScene = self.__sceneStack.pop()
-                layout = (curScene, layout)
-            else:
+
                 try:
-                    self.__sceneStack.pop().hide()
-                except IndexError:
-                    pass
+                    curScene.addLayout(layout)
+                except AttributeError:
+                    layout = Wrapper(curScene, layout)
+            else:
+                self.clear()
 
         self.__sceneStack.append(layout)
         layout.show()
