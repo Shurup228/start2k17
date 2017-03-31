@@ -1,7 +1,7 @@
 """Menus for game."""
 # coding=utf-8
 
-from gui.layout import GridLayout, Layout, Map
+from gui.layout import GridLayout, Map
 from gui.buttons import Button
 
 
@@ -10,19 +10,17 @@ class MainMenu(GridLayout):
         super().__init__(scene)
         self.makeLayout()
 
-    def changeScene(self, scene: Layout, switchType):
-        layout = scene(self._scene)
-        self._scene.nextScene(layout, switchType)
-
     def makeLayout(self):
         start = Button('Start')
         options = Button('Options')
         exit = Button('Quit')
 
         start.clicked.connect(lambda:
-                              self.changeScene(Maps, self._scene.SAVE))
+                              self._scene.nextScene(Maps,
+                                                    switchType=self._scene.SAVE))
         options.clicked.connect(lambda:
-                                self.changeScene(Options, self._scene.SAVE))
+                                self._scene.nextScene(Options,
+                                                      switchType=self._scene.SAVE))
         exit.clicked.connect(quit)
 
         self.addItem(self.DUMMY, 0, 0)
@@ -66,7 +64,7 @@ class Options(GridLayout):
 
     def hide(self):
         super().hide()
-        self._view.escPressed.disconnect()
+        self._view.escPressed.disconnect(self._scene.prevScene)
 
 
 class Maps(GridLayout):
@@ -93,8 +91,7 @@ class Maps(GridLayout):
 
             button = Button(map)
             button.clicked.connect(lambda map=map:
-                                   self._scene.nextScene(Map(self._scene,
-                                                             'maps/' + map)))
+                                   self._scene.nextScene(Map, 'maps/' + map))
             self.addItem(button, row, col)
 
             col += 1
@@ -105,4 +102,4 @@ class Maps(GridLayout):
 
     def hide(self):
         super().hide()
-        self._view.escPressed.disconnect()
+        self._view.escPressed.disconnect(self._scene.prevScene)

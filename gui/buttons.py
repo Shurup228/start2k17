@@ -14,7 +14,9 @@ class Button(QGraphicsObject):
         self._x, self._y = x, y
         self.width, self.height = width, height
         self.__text = text
+        # Allow layout resize button
         self.resizable = resizable
+        # Force button to occupy all available space
         self.expandable = expandable
 
     def setBoundingRect(self, x, y, width, height):

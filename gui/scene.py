@@ -3,7 +3,6 @@
 
 from PyQt5.QtWidgets import QGraphicsScene
 from PyQt5.QtCore import QTimer
-from gui.layout import Layout
 
 
 class Scene(QGraphicsScene):
@@ -56,8 +55,9 @@ class Scene(QGraphicsScene):
 
             layout.prepareGeometry()
 
-    def nextScene(self, layout: Layout, switchType=None):
+    def nextScene(self, layout, *args, switchType=None):
         switchType = switchType or self.CLEAR
+        layout = layout(self, *args)
 
         if len(self.__sceneStack):
             if switchType == self.PAUSE:
