@@ -190,15 +190,14 @@ class Map(GridLayout):
     def __init__(self, scene, map):
         super().__init__(scene)
 
-        self._view.escPressed.connect(self.openMenu)
+        self.view.escPressed.connect(self.openMenu)
 
         self.parseMap(map)
 
     def openMenu(self):
         from gui.menus import InGameMenu
 
-        menu = InGameMenu(self._scene)
-        self._scene.nextLayout(menu, self._scene.PAUSE)
+        self.scene.nextLayout(InGameMenu, type_=self.scene.PAUSE)
 
     def parseMap(self, mapfile):
         mapFile = open(mapfile, 'r')
@@ -220,9 +219,11 @@ class Map(GridLayout):
     def pause(self):
         super().pause()
 
+        self.view.escPressed.disconnect(self.openMenu)
         self._rootItem.setOpacity(0.2)
 
     def resume(self):
         super().resume()
 
+        self.view.escPressed.connect(self.openMenu)
         self._rootItem.setOpacity(1)

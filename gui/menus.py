@@ -98,7 +98,7 @@ class Maps(GridLayout):
 
     def hide(self):
         super().hide()
-        self._view.escPressed.disconnect(self.scene.prevLayout)
+        self.view.escPressed.disconnect(self.scene.prevLayout)
 
 
 class InGameMenu(GridLayout):
@@ -106,21 +106,16 @@ class InGameMenu(GridLayout):
         super().__init__(scene)
         self.makeLayout()
 
-    def mainMenu(self):
-        self._scene.clearBuffer()
-
-        menu = MainMenu(self._scene)
-        self._scene.nextLayout(menu)
-
     def makeLayout(self):
         mainMenu = Button('Main Menu')
         resume = Button('Resume')
         exit = Button('Exit')
 
-        mainMenu.clicked.connect(self.mainMenu)
-        self._view.escPressed.connect(self._scene.prevLayout)
-        resume.clicked.connect(self._scene.prevLayout)
+        mainMenu.clicked.connect(lambda: self.scene.nextLayout(MainMenu))
         exit.clicked.connect(quit)
+
+        self.view.escPressed.connect(self.scene.prevLayout)
+        resume.clicked.connect(self.scene.prevLayout)
 
         self.addItem(self.DUMMY, 0, 0)
         self.addItem(self.DUMMY, 0, 2)

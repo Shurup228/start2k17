@@ -20,6 +20,10 @@ class Wrapper:
     def addLayout(self, layout):
         self.layouts.append(layout)
 
+    def removeLayout(self, layout):
+        self.layouts.remove(layout)
+        layout.hide()
+
     def forEach(self, funcName: str):
         for layout in self.layouts:
             getattr(layout, funcName)()
