@@ -54,16 +54,16 @@ class Scene(QGraphicsScene):
 
             layout.prepareGeometry()
 
-    def nextLayout(self, layout, *args, switchType=None):
-        switchType = switchType or self.CLEAR
+    def nextLayout(self, layout, *args, type_=None):
+        type_ = type_ or self.CLEAR
         layout = layout(self, *args)
 
         if len(self.__sceneStack):
-            if switchType == self.PAUSE:
+            if type_ == self.PAUSE:
                 self.__timer.stop()
 
                 self.__sceneStack[-1].pause()
-            elif switchType == self.COMBINE:
+            elif type_ == self.COMBINE:
                 curScene = self.__sceneStack.pop()
                 layout = (curScene, layout)
             else:

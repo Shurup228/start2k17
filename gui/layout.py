@@ -16,12 +16,20 @@ class Layout(metaclass=ABCMeta):
         Call to prepareGeomety must be done by child,
         only after all vars for resize and repaint methods initialized!
         """
-        self._scene = scene
-        self._view = scene.views()[0]
+        self.__scene = scene
+        self.__view = scene.views()[0]
         # State of layout
         self.__pause = False
         # Parent item for grouping
-        self.__rootItem = None
+        self._rootItem = None
+
+    @property
+    def scene(self):
+        return self.__scene
+
+    @property
+    def view(self):
+        return self.__view
 
     @abstractmethod
     def addItem(self):
@@ -52,8 +60,8 @@ class Layout(metaclass=ABCMeta):
 
         In fact, not only preparing, but updating too.
         """
-        self._width, self._height = self._view.resolution
-        self._scene.setSceneRect(0, 0, *self._view.resolution)
+        self._width, self._height = self.view.resolution
+        self.scene.setSceneRect(0, 0, *self.view.resolution)
         # To avoid image artifacts
         self.update()
 
@@ -76,54 +84,42 @@ class GridLayout(Layout):
 
     def __init__(self, scene: QGraphicsScene):
         super().__init__(scene)
-        self._scene = scene
-
         self.__rectWidth, self.__rectHeight = None, None
-
         self.rows, self.colls = 1, 1
-        # items == [[(item, rowspan, colspan)]]
-        self.items = [[]]
+        # items: [[(item, rowspan, colspan)]]
+        self._items = [[]]
         # Initialization of width and height
         self.prepareGeometry()
 
     def prepareGeometry(self):
-        self._width, self._height = self._view.resolution
-        self._scene.setSceneRect(0, 0, *self._view.resolution)
+        self._width, self._height = self.view.resolution
+        self.scene.setSceneRect(0, 0, *self.view.resolution)
 
         self.resize()
         self.update()
 
-    def hasItem(self):
-        """Checks, whether items list has items or not."""
-        for row in self.items:
-            for item, _, _ in row:
-                if item != self.DUMMY:
-                    return True
-
-        return False
-
     def addItem(self, item: QGraphicsItem, row, coll, rowspan=1, colspan=1):
         if item != self.DUMMY:
-            if not self.hasItem():
-                self.__rootItem = item
-                self.__rootItem.setParentItem(None)
+            if self._rootItem is None:
+                self._rootItem = item
+                self._rootItem.setParentItem(None)
             else:
-                item.setParentItem(self.__rootItem)
+                item.setParentItem(self._rootItem)
 
         self.rows = self.rows if row + rowspan <= self.rows else row + 1
         self.colls = self.colls if coll + colspan <= self.colls else coll + 1
         self.resize()
 
-        self.items[row][coll] = (item, rowspan, colspan)
+        self._items[row][coll] = (item, rowspan, colspan)
         self.repaint()
 
     def resize(self):
-        for x in range(self.rows + 1 - len(self.items)):
-            self.items.append([])
+        for x in range(self.rows + 1 - len(self._items)):
+            self._items.append([])
 
-        for row in range(len(self.items)):
-            for y in range(self.colls - len(self.items[row])):
-                self.items[row].append((self.DUMMY, 1, 1))
+        for row in range(len(self._items)):
+            for y in range(self.colls - len(self._items[row])):
+                self._items[row].append((self.DUMMY, 1, 1))
 
         self.__rectWidth = self._width / self.colls
         self.__rectHeight = self._height / self.rows
@@ -133,7 +129,7 @@ class GridLayout(Layout):
 
         for row in range(self.rows):
             for coll in range(self.colls):
-                item, rspan, cspan = self.items[row][coll]
+                item, rspan, cspan = self._items[row][coll]
 
                 if item == self.DUMMY:
                     continue
@@ -169,18 +165,18 @@ class GridLayout(Layout):
                 # We need to shift item coords because of itemGroup
                 # Fucking itemGroup in qt shifts all coords by parent coords
                 # FUCK!!
-                x = x - self.__rootItem.x() if item != self.__rootItem else x
-                y = y - self.__rootItem.y() if item != self.__rootItem else y
+                x = x - self._rootItem.x() if item != self._rootItem else x
+                y = y - self._rootItem.y() if item != self._rootItem else y
 
                 item.setPos(x, y)
 
     def show(self):
         # Here, at last, we can use the benefits of item group
-        self._scene.addItem(self.__rootItem)
+        self.scene.addItem(self._rootItem)
 
     def hide(self):
         # Here too
-        self._scene.removeItem(self.__rootItem)
+        self.scene.removeItem(self._rootItem)
 
 
 class Map(GridLayout):

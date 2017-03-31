@@ -15,8 +15,8 @@ class MainMenu(GridLayout):
         options = Button('Options')
         exit = Button('Quit')
 
-        start.clicked.connect(lambda: self._scene.nextLayout(Maps))
-        options.clicked.connect(lambda: self._scene.nextLayout(Options))
+        start.clicked.connect(lambda: self.scene.nextLayout(Maps))
+        options.clicked.connect(lambda: self.scene.nextLayout(Options))
         exit.clicked.connect(quit)
 
         self.addItem(self.DUMMY, 0, 0)
@@ -30,37 +30,37 @@ class Options(GridLayout):
     def __init__(self, scene):
         super().__init__(scene)
 
-        self._view.escPressed.connect(self._scene.prevLayout)
+        self.view.escPressed.connect(self.scene.prevLayout)
         self.makeLayout()
 
     def changeResolution(self, button):
-        res = next(self._view.nextResolution)
-        self._view.resolution = res
+        res = next(self.view.nextResolution)
+        self.view.resolution = res
 
         # Adapting layout to new geometry
         # Calls prepareGeomety under the hood
-        self._scene.resizeLayouts()
+        self.scene.resizeLayouts()
 
         button.changeText('Resolution:\n\n{} x {}'.format(*res))
 
     def makeLayout(self):
         try:
-            text = 'Resolution:\n\n{} x {}'.format(*self._view.resolution)
+            text = 'Resolution:\n\n{} x {}'.format(*self.view.resolution)
         except TypeError:
-            text = 'Resolution:\n\n{} x {}'.format(self._view.nativeW, self._view.nativeH)
+            text = 'Resolution:\n\n{} x {}'.format(self.view.nativeW, self.view.nativeH)
 
         res = Button(text)
         back = Button('Back')
 
         res.clicked.connect(lambda: self.changeResolution(res))
-        back.clicked.connect(self._scene.prevLayout)
+        back.clicked.connect(self.scene.prevLayout)
 
         self.addItem(res, 0, 0)
         self.addItem(back, 1, 0)
 
     def hide(self):
         super().hide()
-        self._view.escPressed.disconnect(self._scene.prevLayout)
+        self.view.escPressed.disconnect(self.scene.prevLayout)
 
 
 class Maps(GridLayout):
@@ -69,7 +69,7 @@ class Maps(GridLayout):
         # List with maps
         self.maps = None
 
-        self._view.escPressed.connect(self._scene.prevLayout)
+        self.view.escPressed.connect(self.scene.prevLayout)
         self.makeLayout()
 
     def getMaps(self):
@@ -87,15 +87,15 @@ class Maps(GridLayout):
 
             button = Button(map)
             button.clicked.connect(lambda map=map:
-                                   self._scene.nextLayout(Map, 'maps/' + map))
+                                   self.scene.nextLayout(Map, 'maps/' + map))
             self.addItem(button, row, col)
 
             col += 1
 
         back = Button('Back')
-        back.clicked.connect(self._scene.prevLayout)
+        back.clicked.connect(self.scene.prevLayout)
         self.addItem(back, row + 1, col - 1)
 
     def hide(self):
         super().hide()
-        self._view.escPressed.disconnect(self._scene.prevLayout)
+        self.view.escPressed.disconnect(self.scene.prevLayout)
