@@ -15,8 +15,8 @@ class MainMenu(GridLayout):
         options = Button('Options')
         exit = Button('Quit')
 
-        start.clicked.connect(lambda: self.scene.nextLayout(Maps))
-        options.clicked.connect(lambda: self.scene.nextLayout(Options))
+        start.clicked.connect(lambda: self.scene.nextLayout(Maps, type_=self.scene.SAVE))
+        options.clicked.connect(lambda: self.scene.nextLayout(Options, type_=self.scene.SAVE))
         exit.clicked.connect(quit)
 
         self.addItem(self.DUMMY, 0, 0)
