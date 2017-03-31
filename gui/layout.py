@@ -18,11 +18,9 @@ class Layout(metaclass=ABCMeta):
         """
         self._scene = scene
         self._view = scene.views()[0]
-        # Keeps all items in layout
-        self.__items = []
         # State of layout
         self.__pause = False
-        # Parent item for group
+        # Parent item for grouping
         self.__rootItem = None
 
     @abstractmethod
@@ -50,6 +48,10 @@ class Layout(metaclass=ABCMeta):
         pass
 
     def prepareGeometry(self):
+        """Prepare scene to resolution changes.
+
+        In fact, not only preparing, but updating too.
+        """
         self._width, self._height = self._view.resolution
         self._scene.setSceneRect(0, 0, *self._view.resolution)
         self.resize()
@@ -59,14 +61,17 @@ class Layout(metaclass=ABCMeta):
         pass
 
     def update(self):
-        """Updates all items in layout."""
+        """Updates all items in layout.
+
+        Not needed in menu, for entity layouts.
+        """
         pass
 
 
 class GridLayout(Layout):
     """Grid layout for managing simple menus."""
 
-    # Dummy item
+    # Dummy item for resizing purposes
     DUMMY = ''
 
     def __init__(self, scene: QGraphicsScene):
@@ -82,6 +87,7 @@ class GridLayout(Layout):
         self.prepareGeometry()
 
     def hasItem(self):
+        """Checks, whether items list has items or not."""
         for row in self.items:
             for item, _, _ in row:
                 if item != self.DUMMY:
@@ -105,7 +111,6 @@ class GridLayout(Layout):
         self.repaint()
 
     def resize(self):
-        """Fill item matrix to fit in all colls and rows."""
         for x in range(self.rows + 1 - len(self.items)):
             self.items.append([])
 
@@ -117,7 +122,6 @@ class GridLayout(Layout):
         self.__rectHeight = self._height / self.rows
 
     def repaint(self):
-        """Redraws all widgets after new added and matrix resized."""
         from math import sqrt
 
         for row in range(self.rows):
@@ -130,7 +134,7 @@ class GridLayout(Layout):
                 rect = item.boundingRect()
                 e = item.expandable
 
-                if item.resizable or item.expandable:
+                if item.resizable or e:
                     cx, cy = rect.width() / 2, rect.height() / 2
                     rx, ry = rect.x(), rect.y()
 
@@ -173,9 +177,11 @@ class GridLayout(Layout):
 
 
 class Map(GridLayout):
+    # Mapping between symbols in file and game objects
+    MAPPING = {'w': Wall, 'e': Air}
+
     def __init__(self, scene, map):
         super().__init__(scene)
-        self.mapping = {'w': Wall, 'e': Air}
 
         self.parseMap(map)
 
@@ -184,16 +190,14 @@ class Map(GridLayout):
 
         skipped = 0
         for row, line in enumerate(mapFile):
+            # Skip comment lines
             if line.startswith('#'):
                 skipped += 1
                 continue
 
             for col, sym in enumerate(line):
                 try:
-                    item = self.mapping[sym]()
+                    item = self.MAPPING[sym]()
                 except KeyError:
                     continue
                 self.addItem(item, row - skipped, col)
-
-    def show(self):
-        super().show()

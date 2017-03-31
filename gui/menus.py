@@ -44,6 +44,7 @@ class Options(GridLayout):
         self._view.resolution = res
 
         # Adapting layout to new geometry
+        # Calls prepareGeomety under the hood
         self._scene.resizeLayouts()
 
         button.changeText('Resolution:\n\n{} x {}'.format(*res))

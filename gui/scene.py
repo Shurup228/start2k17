@@ -31,11 +31,13 @@ class Scene(QGraphicsScene):
         self.__timer.start(self.__TIMER_DELAY)
 
     def __update(self):
+        """Updates current scene."""
         try:
             currentScene = self.__sceneStack[-1]
         except IndexError:
             return
 
+        # If this is game layout, update all
         if isinstance(currentScene, tuple):
             for layout in currentScene:
                 layout.update()
@@ -43,10 +45,15 @@ class Scene(QGraphicsScene):
         currentScene.update()
 
     def resizeLayouts(self):
+        """Resizes layouts in buffer.
+
+        Primarily used when resolution changed =)
+        """
         for layout in self.__sceneStack:
             if isinstance(layout, tuple):
                     for _layout in layout:
                         _layout.prepareGeometry()
+
             layout.prepareGeometry()
 
     def nextScene(self, layout: Layout, switchType=None):
