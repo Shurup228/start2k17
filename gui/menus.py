@@ -41,12 +41,12 @@ class Options(GridLayout):
 
     def changeResolution(self, button):
         res = next(self._view.nextResolution)
+        self._view.resolution = res
 
         # Adapting layout to new geometry
-        self.prepareGeometry(*res)
+        self._scene.resizeLayouts()
 
         button.changeText('Resolution:\n\n{} x {}'.format(*res))
-        print('Button pressed, current res -> {} x {}'.format(*res))
 
     def makeLayout(self):
         try:
@@ -91,7 +91,7 @@ class Maps(GridLayout):
                 row += 1
 
             button = Button(map)
-            button.clicked.connect(lambda:
+            button.clicked.connect(lambda map=map:
                                    self._scene.nextScene(Map(self._scene,
                                                              'maps/' + map)))
             self.addItem(button, row, col)

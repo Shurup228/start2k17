@@ -20,13 +20,17 @@ class GraphicsView(QGraphicsView):
         # Disabling scrollbars
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        # Scene always at the center of views
+        self.setResizeAnchor(self.AnchorViewCenter)
 
     def resolutionChange(self):
         resLst = [(800, 600), (1280, 720), (1366, 768), (1920, 1080)]
 
         # Scene size == native size
         rect = self.scene().sceneRect()
+        # Initializing native resolution
         self.nativeW, self.nativeH = int(rect.width()), int(rect.height())
+        self.resolution = self.nativeW, self.nativeH
 
         # Filter resolutions to not exceed native
         resolutions = [res for res in resLst if res[0] <= self.nativeW]
@@ -40,7 +44,6 @@ class GraphicsView(QGraphicsView):
             self.scale(*factor)
 
             yield res
-            self.resolution = res
 
             # Scale to next resolution
             factor = res[0] / self.nativeW, res[1] / self.nativeH

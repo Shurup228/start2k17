@@ -42,6 +42,13 @@ class Scene(QGraphicsScene):
 
         currentScene.update()
 
+    def resizeLayouts(self):
+        for layout in self.__sceneStack:
+            if isinstance(layout, tuple):
+                    for _layout in layout:
+                        _layout.prepareGeometry()
+            layout.prepareGeometry()
+
     def nextScene(self, layout: Layout, switchType=None):
         switchType = switchType or self.CLEAR
 

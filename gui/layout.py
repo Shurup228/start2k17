@@ -10,10 +10,14 @@ class Layout(metaclass=ABCMeta):
     """Base layout class(For inheritance only)."""
 
     def __init__(self, scene: QGraphicsScene):
+        """
+        Initialization of layout.
+
+        Call to prepareGeomety must be done by child,
+        only after all vars for resize and repaint methods initialized!
+        """
         self._scene = scene
         self._view = scene.views()[0]
-
-        self._width, self._height = scene.width(), scene.height()
         # Keeps all items in layout
         self.__items = []
         # State of layout
@@ -35,9 +39,21 @@ class Layout(metaclass=ABCMeta):
         """Remove items from scene."""
         pass
 
-    def prepareGeometry(self, newWidth, newHeight):
-        self._width, self._height = newWidth, newHeight
-        print('Preparing layout, resolution -> {} x {}'.format(self._width, self._height))
+    @abstractmethod
+    def resize(self):
+        """Resizes internal buffer and cell rect."""
+        pass
+
+    @abstractmethod
+    def repaint(self):
+        """Redraws widgets on layout."""
+        pass
+
+    def prepareGeometry(self):
+        self._width, self._height = self._view.resolution
+        self._scene.setSceneRect(0, 0, *self._view.resolution)
+        self.resize()
+        self.repaint()
 
     def pause(self):
         pass
@@ -62,6 +78,8 @@ class GridLayout(Layout):
         self.rows, self.colls = 1, 1
         # items == [[(item, rowspan, colspan)]]
         self.items = [[]]
+        # Initialization of width and height
+        self.prepareGeometry()
 
     def hasItem(self):
         for row in self.items:
@@ -179,4 +197,3 @@ class Map(GridLayout):
 
     def show(self):
         super().show()
-        print(self._width, self._height)
