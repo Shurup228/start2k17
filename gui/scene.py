@@ -10,7 +10,6 @@ class Scene(QGraphicsScene):
 
     PAUSE = 'pause'
     CLEAR = 'clear'
-    SAVE = 'save'
     COMBINE = 'combine'
 
     def __init__(self, *args):
@@ -55,7 +54,7 @@ class Scene(QGraphicsScene):
 
             layout.prepareGeometry()
 
-    def nextScene(self, layout, *args, switchType=None):
+    def nextLayout(self, layout, *args, switchType=None):
         switchType = switchType or self.CLEAR
         layout = layout(self, *args)
 
@@ -64,8 +63,6 @@ class Scene(QGraphicsScene):
                 self.__timer.stop()
 
                 self.__sceneStack[-1].pause()
-            elif switchType == self.SAVE:
-                self.__sceneStack[-1].hide()
             elif switchType == self.COMBINE:
                 curScene = self.__sceneStack.pop()
                 layout = (curScene, layout)
@@ -75,7 +72,7 @@ class Scene(QGraphicsScene):
         self.__sceneStack.append(layout)
         layout.show()
 
-    def prevScene(self):
+    def prevLayout(self):
         currentScene = self.__sceneStack.pop()
         currentScene.hide()
 

@@ -15,12 +15,8 @@ class MainMenu(GridLayout):
         options = Button('Options')
         exit = Button('Quit')
 
-        start.clicked.connect(lambda:
-                              self._scene.nextScene(Maps,
-                                                    switchType=self._scene.SAVE))
-        options.clicked.connect(lambda:
-                                self._scene.nextScene(Options,
-                                                      switchType=self._scene.SAVE))
+        start.clicked.connect(lambda: self._scene.nextLayout(Maps))
+        options.clicked.connect(lambda: self._scene.nextLayout(Options))
         exit.clicked.connect(quit)
 
         self.addItem(self.DUMMY, 0, 0)
@@ -34,7 +30,7 @@ class Options(GridLayout):
     def __init__(self, scene):
         super().__init__(scene)
 
-        self._view.escPressed.connect(self._scene.prevScene)
+        self._view.escPressed.connect(self._scene.prevLayout)
         self.makeLayout()
 
     def changeResolution(self, button):
@@ -57,14 +53,14 @@ class Options(GridLayout):
         back = Button('Back')
 
         res.clicked.connect(lambda: self.changeResolution(res))
-        back.clicked.connect(self._scene.prevScene)
+        back.clicked.connect(self._scene.prevLayout)
 
         self.addItem(res, 0, 0)
         self.addItem(back, 1, 0)
 
     def hide(self):
         super().hide()
-        self._view.escPressed.disconnect(self._scene.prevScene)
+        self._view.escPressed.disconnect(self._scene.prevLayout)
 
 
 class Maps(GridLayout):
@@ -73,7 +69,7 @@ class Maps(GridLayout):
         # List with maps
         self.maps = None
 
-        self._view.escPressed.connect(self._scene.prevScene)
+        self._view.escPressed.connect(self._scene.prevLayout)
         self.makeLayout()
 
     def getMaps(self):
@@ -91,15 +87,15 @@ class Maps(GridLayout):
 
             button = Button(map)
             button.clicked.connect(lambda map=map:
-                                   self._scene.nextScene(Map, 'maps/' + map))
+                                   self._scene.nextLayout(Map, 'maps/' + map))
             self.addItem(button, row, col)
 
             col += 1
 
         back = Button('Back')
-        back.clicked.connect(self._scene.prevScene)
+        back.clicked.connect(self._scene.prevLayout)
         self.addItem(back, row + 1, col - 1)
 
     def hide(self):
         super().hide()
-        self._view.escPressed.disconnect(self._scene.prevScene)
+        self._view.escPressed.disconnect(self._scene.prevLayout)
