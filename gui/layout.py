@@ -13,7 +13,7 @@ class Layout(metaclass=ABCMeta):
         self._scene = scene
         self._view = scene.views()[0]
 
-        self._width, self._height = self._view.width(), self._view.height()
+        self._width, self._height = scene.width(), scene.height()
         # Keeps all items in layout
         self.__items = []
         # State of layout
@@ -35,8 +35,9 @@ class Layout(metaclass=ABCMeta):
         """Remove items from scene."""
         pass
 
-    def prepareGeometry(self):
-        self._width, self._height = self._view.widht(), self._view.height()
+    def prepareGeometry(self, newWidth, newHeight):
+        self._width, self._height = newWidth, newHeight
+        print('Preparing layout, resolution -> {} x {}'.format(self._width, self._height))
 
     def pause(self):
         pass
@@ -61,8 +62,6 @@ class GridLayout(Layout):
         self.rows, self.colls = 1, 1
         # items == [[(item, rowspan, colspan)]]
         self.items = [[]]
-        print(self._width, self._height)
-        print(self._view.sceneRect())
 
     def hasItem(self):
         for row in self.items:
@@ -177,3 +176,7 @@ class Map(GridLayout):
                 except KeyError:
                     continue
                 self.addItem(item, row - skipped, col)
+
+    def show(self):
+        super().show()
+        print(self._width, self._height)

@@ -3,7 +3,7 @@
 
 from PyQt5.QtWidgets import QGraphicsRectItem
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QBrush
+from PyQt5.QtGui import QBrush, QPen
 
 
 class Wall(QGraphicsRectItem):
@@ -25,6 +25,7 @@ class Air(QGraphicsRectItem):
         self.resizable = False
 
         self.setBrush(QBrush(Qt.white))
+        self.setPen(QPen(Qt.white))
 
     def setBoundingRect(self, x, y, width, height):
         self.setRect(x, y, width, height)

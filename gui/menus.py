@@ -40,14 +40,21 @@ class Options(GridLayout):
         self.makeLayout()
 
     def changeResolution(self, button):
-        res = next(self._view.resolution)
+        res = next(self._view.nextResolution)
 
-        button.changeText('{} x {}'.format(*res))
+        # Adapting layout to new geometry
+        self.prepareGeometry(*res)
+
+        button.changeText('Resolution:\n\n{} x {}'.format(*res))
+        print('Button pressed, current res -> {} x {}'.format(*res))
 
     def makeLayout(self):
-        res = next(self._view.resolution)
+        try:
+            text = 'Resolution:\n\n{} x {}'.format(*self._view.resolution)
+        except TypeError:
+            text = 'Resolution:\n\n{} x {}'.format(self._view.nativeW, self._view.nativeH)
 
-        res = Button('{} x {}'.format(*res))
+        res = Button(text)
         back = Button('Back')
 
         res.clicked.connect(lambda: self.changeResolution(res))
@@ -77,10 +84,6 @@ class Maps(GridLayout):
     def makeLayout(self):
         self.getMaps()
 
-        # Make our collon central
-        self.addItem(self.DUMMY, 0, 0)
-        self.addItem(self.DUMMY, 0, 2)
-
         row = col = 0
         for map in self.maps:
             if col == 3:
@@ -97,7 +100,7 @@ class Maps(GridLayout):
 
         back = Button('Back')
         back.clicked.connect(self._scene.prevScene)
-        self.addItem(back, row + 1, 1)
+        self.addItem(back, row + 1, col - 1)
 
     def hide(self):
         super().hide()

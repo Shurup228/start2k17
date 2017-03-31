@@ -19,6 +19,10 @@ class Scene(QGraphicsScene):
         self.__sceneStack = []
         self.initTimer()
 
+    @property
+    def layout(self):
+        return self.__sceneStack[-1]
+
     def initTimer(self):
         self.__timer = QTimer(self)
 
