@@ -142,8 +142,11 @@ class InGameMenu(GridLayout):
         resume = Button('Resume')
         exit = Button('Exit')
 
+        wrap = self.scene.wrap
+        nextLayout = self.scene.nextLayout
+
         mainMenu.clicked.connect(self.scene.recoverTimer)
-        mainMenu.clicked.connect(lambda: withBackground(self.scene, MainMenu))
+        mainMenu.clicked.connect(lambda: nextLayout(wrap({Background: (), MainMenu: ()})))
         exit.clicked.connect(quit)
 
         L.debug('\u001b[34mConnecting esc to prevLayout\u001b[0m')

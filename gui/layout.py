@@ -247,9 +247,12 @@ class Map(GridLayout):
         self.parseMap(map)
 
     def openMenu(self):
-        from gui.menus import InGameMenu, withBackground
+        from gui.menus import InGameMenu
 
-        withBackground(self.scene, InGameMenu, mode=self.scene.PAUSE)
+        wrap = self.scene.wrap
+        nextLayout = self.scene.nextLayout
+
+        nextLayout(wrap({Background: (), InGameMenu: ()}), mode=self.scene.PAUSE)
 
     def parseMap(self, mapfile):
         L.debug('\u001b[34mParsing map file\u001b[0m')
