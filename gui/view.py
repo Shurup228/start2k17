@@ -1,9 +1,12 @@
 """View setup."""
 # coding=utf-8
 
+from logging import getLogger
 from PyQt5.QtWidgets import QGraphicsView
 from PyQt5.QtCore import Qt, pyqtSignal
 from itertools import cycle
+
+L = getLogger('gameLogger')
 
 
 class GraphicsView(QGraphicsView):
@@ -11,9 +14,11 @@ class GraphicsView(QGraphicsView):
 
     def __init__(self, *args):
         super().__init__(*args)
+        L.debug('\u001b[33mInitializing view\u001b[0m')
         self.resolution = None
         self.nativeW, self.nativeH = 0, 0
-        # Initializing resolution generator
+        # Initializing resolutions generator
+        L.debug('\u001b[33mInitializing resolutins generator\u001b[0m')
         self.nextResolution = self.resolutionChange()
         next(self.nextResolution)
 
@@ -51,4 +56,5 @@ class GraphicsView(QGraphicsView):
         super().keyPressEvent(event)
 
         if event.key() == Qt.Key_Escape:
+            L.debug('\u001b[32mEsc pressed\u001b[0m')
             self.escPressed.emit()

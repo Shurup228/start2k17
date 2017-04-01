@@ -1,9 +1,12 @@
 """Layout like layouts in qt(QGridLayout)."""
 # coding=utf-8
 
+from logging import getLogger, INFO, DEBUG
 from abc import ABCMeta, abstractmethod
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsItem
 from objects.map_elements import Wall, Air
+
+L = getLogger('gameLogger')
 
 
 class Layout(metaclass=ABCMeta):
@@ -19,7 +22,7 @@ class Layout(metaclass=ABCMeta):
         self.__scene = scene
         self.__view = scene.views()[0]
         # State of layout
-        self._pause = False
+        self.hided = True
         # Parent item for grouping self._rootItem = None
         # Parent item for grouping
         self._rootItem = None
@@ -37,16 +40,6 @@ class Layout(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def show(self):
-        """Add items to scene."""
-        pass
-
-    @abstractmethod
-    def hide(self):
-        """Remove items from scene."""
-        pass
-
-    @abstractmethod
     def resize(self):
         """Resizes internal buffer and cell rect."""
         pass
@@ -55,6 +48,16 @@ class Layout(metaclass=ABCMeta):
     def repaint(self):
         """Redraws widgets on layout."""
         pass
+
+    def show(self):
+        """Add items to scene."""
+        L.debug('\u001b[32mhided = False in {}\u001b[0m'.format(self))
+        self.hided = False
+
+    def hide(self):
+        """Remove items from scene."""
+        L.debug('\u001b[32mhided = True in {}\u001b[0m'.format(self))
+        self.hided = True
 
     def prepareGeometry(self):
         """Prepare scene to resolution changes.
@@ -88,6 +91,7 @@ class GridLayout(Layout):
 
     def __init__(self, scene: QGraphicsScene):
         super().__init__(scene)
+        L.debug('\u001b[33mInitializing grid layout\u001b[0m')
         self.__rectWidth, self.__rectHeight = None, None
         self.rows, self.colls = 1, 1
         # items: [[(item, rowspan, colspan)]]
@@ -96,6 +100,7 @@ class GridLayout(Layout):
         self.prepareGeometry()
 
     def prepareGeometry(self):
+        L.debug('\u001b[34mUpdating geometry of grid layout\u001b[0m')
         self._width, self._height = self.view.resolution
         self.scene.setSceneRect(0, 0, *self.view.resolution)
 
@@ -104,6 +109,7 @@ class GridLayout(Layout):
 
     def addItem(self, item: QGraphicsItem, row, coll, rowspan=1, colspan=1):
         if item != self.DUMMY:
+            L.debug('\u001b[34mAdding {} in row {}, col {}\u001b[0m'.format(item, row, coll))
             if self._rootItem is None:
                 self._rootItem = item
                 self._rootItem.setParentItem(None)
@@ -175,11 +181,15 @@ class GridLayout(Layout):
                 item.setPos(x, y)
 
     def show(self):
+        super().show()
         # Here, at last, we can use the benefits of item group
+        L.debug('\u001b[34mAdding {} to scene\u001b[0m'.format(self))
         self.scene.addItem(self._rootItem)
 
     def hide(self):
+        super().hide()
         # Here too
+        L.debug('\u001b[34mRemoving {} from scene\u001b[0m'.format(self))
         self.scene.removeItem(self._rootItem)
 
 
@@ -189,7 +199,10 @@ class Map(GridLayout):
 
     def __init__(self, scene, map):
         super().__init__(scene)
+        L.debug('\u001b[34mInitializing Map\u001b[0m'.format(map))
+        L.debug('\u001b[32mmap = {}\u001b[0m'.format(map))
 
+        L.debug('\u001b[34mConnecting openMenu to esc\u001b[0m')
         self.view.escPressed.connect(self.openMenu)
 
         self.parseMap(map)
@@ -200,6 +213,8 @@ class Map(GridLayout):
         self.scene.nextLayout(InGameMenu, type_=self.scene.PAUSE)
 
     def parseMap(self, mapfile):
+        L.debug('\u001b[34mParsing map file\u001b[0m')
+        L.setLevel(INFO)
         mapFile = open(mapfile, 'r')
 
         skipped = 0
@@ -215,15 +230,21 @@ class Map(GridLayout):
                 except KeyError:
                     continue
                 self.addItem(item, row - skipped, col)
+        L.setLevel(DEBUG)
+        L.debug('\u001b[32mFile map parsed\u001b[0m')
 
     def pause(self):
         super().pause()
 
+        L.debug('\u001b[34mDisconnecting openMenu from esc\u001b[0m')
         self.view.escPressed.disconnect(self.openMenu)
+        L.debug('\u001b[34mSetting opacity of map to 0.2\u001b[0m')
         self._rootItem.setOpacity(0.2)
 
     def resume(self):
         super().resume()
 
+        L.debug('\u001b[34mConnecting openMenu to esc\u001b[0m')
         self.view.escPressed.connect(self.openMenu)
+        L.debug('\u001b[34mSetting opacity to normal\u001b[0m')
         self._rootItem.setOpacity(1)

@@ -1,8 +1,11 @@
 """Buttons go here."""
 # coding=utf-8
 
+from logging import getLogger
 from PyQt5.QtWidgets import QGraphicsObject
 from PyQt5.QtCore import pyqtSignal, QRectF, Qt
+
+L = getLogger('gameLogger')
 
 
 class Button(QGraphicsObject):
@@ -19,6 +22,10 @@ class Button(QGraphicsObject):
         # Force button to occupy all available space
         self.expandable = expandable
 
+        L.debug('\u001b[33mCreated button<{}>, resizable: {},'.format(
+                text.replace('\n', ''), resizable) +
+                ' expandable: {}\u001b[0m'.format(expandable))
+
     def setBoundingRect(self, x, y, width, height):
         self._x, self._y = x, y
         self.width, self.height = width, height
@@ -33,6 +40,7 @@ class Button(QGraphicsObject):
         painter.drawRect(self.boundingRect())
 
     def mousePressEvent(self, event):
+        L.debug('\u001b[34mButton clicked\u001b[0m')
         if event.button() == Qt.LeftButton:
             self.clicked.emit()
 
