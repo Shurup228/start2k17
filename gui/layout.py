@@ -210,7 +210,7 @@ class Map(GridLayout):
     def openMenu(self):
         from gui.menus import InGameMenu
 
-        self.scene.nextLayout(InGameMenu, type_=self.scene.PAUSE)
+        self.scene.nextLayout(InGameMenu, mode=self.scene.PAUSE)
 
     def parseMap(self, mapfile):
         L.debug('\u001b[34mParsing map file\u001b[0m')

@@ -20,8 +20,8 @@ class MainMenu(GridLayout):
         options = Button('Options')
         exit = Button('Quit')
 
-        start.clicked.connect(lambda: self.scene.nextLayout(Maps, type_=self.scene.SAVE))
-        options.clicked.connect(lambda: self.scene.nextLayout(Options, type_=self.scene.SAVE))
+        start.clicked.connect(lambda: self.scene.nextLayout(Maps, mode=self.scene.SAVE))
+        options.clicked.connect(lambda: self.scene.nextLayout(Options, mode=self.scene.SAVE))
         exit.clicked.connect(quit)
 
         L.debug('\u001b[34mAdding buttons to layout\u001b[0m')

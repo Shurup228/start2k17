@@ -116,13 +116,13 @@ class Scene(QGraphicsScene):
 
         self.__sceneStack.clear()
 
-    def nextLayout(self, layout, *args, type_=None):
-        type_ = type_ or self.CLEAR
-        L.debug('\u001b[34mSetting next layout {} in {} mode\u001b[0m'.format(layout, type_))
+    def nextLayout(self, layout, *args, mode=None):
+        mode = mode or self.CLEAR
+        L.debug('\u001b[34mSetting next layout {} in {} mode\u001b[0m'.format(layout, mode))
         layout = layout(self, *args)
 
         if len(self.__sceneStack):
-            if type_ == self.PAUSE:
+            if mode == self.PAUSE:
                 L.debug('\u001b[34mPausing timer\u001b[0m')
                 self.__timer.stop()
 
@@ -130,9 +130,9 @@ class Scene(QGraphicsScene):
 
                 L.debug('\u001b[34mPausing {}\u001b[0m'.format(self.layout))
                 self.layout.pause()
-            elif type_ == self.SAVE:
+            elif mode == self.SAVE:
                 self.hide(self.layout)
-            elif type_ == self.COMBINE:
+            elif mode == self.COMBINE:
                 curScene = self.__sceneStack.pop()
 
                 try:
