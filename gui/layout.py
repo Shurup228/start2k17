@@ -98,7 +98,7 @@ class GridLayout(Layout):
     # Dummy item for resizing purposes
     DUMMY = ''
 
-    def __init__(self, scene: QGraphicsScene):
+    def __init__(self, scene: QGraphicsScene, background=False):
         super().__init__(scene)
         L.debug('\u001b[33mInitializing grid layout\u001b[0m')
         self.__rectWidth, self.__rectHeight = None, None
@@ -108,13 +108,19 @@ class GridLayout(Layout):
         # Initialization of width and height
         self.prepareGeometry()
 
+        if background:
+            self.setBackground()
+
     def prepareGeometry(self):
-        L.debug('\u001b[34mUpdating geometry of grid layout\u001b[0m')
         self._width, self._height = self.view.resolution
         self.scene.setSceneRect(0, 0, *self.view.resolution)
 
         self.resize()
         self.update()
+
+    def setBackground(self):
+        self.scene.nextLayout(Background)
+        self.scene.nextLayout(self, mode=self.scene.COMBINE)
 
     def addItem(self, item: QGraphicsItem, row, coll, rowspan=1, colspan=1):
         if item != self.DUMMY:
@@ -203,11 +209,22 @@ class GridLayout(Layout):
 
 
 class Background(GridLayout):
-    def __init__(self, scene, path):
+    def __init__(self, scene, path=None):
         super().__init__(scene)
+        L.debug('\u001b[34mInitializing Background\u001b[0m')
+        path = path or self.getPath()
+        L.debug('\u001b[32mbackground = {}\u001b[0m'.format(path))
         self.image = QImage(path)
 
         self.fillBackground()
+
+    def getPath(self):
+        from os import listdir, sep
+        from random import choice
+
+        images = listdir('backgrounds')
+
+        return 'backgrounds' + sep + choice(images)
 
     def fillBackground(self):
         self.addItem(BackgroundImage(self.image), 0, 0)
@@ -219,7 +236,7 @@ class Map(GridLayout):
 
     def __init__(self, scene, map):
         super().__init__(scene)
-        L.debug('\u001b[34mInitializing Map\u001b[0m'.format(map))
+        L.debug('\u001b[34mInitializing Map\u001b[0m')
         L.debug('\u001b[32mmap = {}\u001b[0m'.format(map))
 
         L.debug('\u001b[34mConnecting openMenu to esc\u001b[0m')
@@ -228,9 +245,9 @@ class Map(GridLayout):
         self.parseMap(map)
 
     def openMenu(self):
-        from gui.menus import InGameMenu
+        from gui.menus import InGameMenu, withBackground
 
-        self.scene.nextLayout(InGameMenu, mode=self.scene.PAUSE)
+        withBackground(self.scene, InGameMenu, mode=self.scene.PAUSE)
 
     def parseMap(self, mapfile):
         L.debug('\u001b[34mParsing map file\u001b[0m')
@@ -258,13 +275,9 @@ class Map(GridLayout):
 
         L.debug('\u001b[34mDisconnecting openMenu from esc\u001b[0m')
         self.view.escPressed.disconnect(self.openMenu)
-        L.debug('\u001b[34mSetting opacity of map to 0.2\u001b[0m')
-        self._rootItem.setOpacity(0.2)
 
     def resume(self):
         super().resume()
 
         L.debug('\u001b[34mConnecting openMenu to esc\u001b[0m')
         self.view.escPressed.connect(self.openMenu)
-        L.debug('\u001b[34mSetting opacity to normal\u001b[0m')
-        self._rootItem.setOpacity(1)

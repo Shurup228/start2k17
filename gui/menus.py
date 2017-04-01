@@ -4,8 +4,17 @@
 from logging import getLogger
 from gui.layout import GridLayout, Map
 from gui.buttons import Button
+from gui.layout import Background
 
 L = getLogger('gameLogger')
+
+
+def withBackground(scene, layout, mode=None):
+    L.debug('\u001b[34mAdding background to {}\u001b[0m'.format(layout))
+    mode = mode or scene.CLEAR
+
+    scene.nextLayout(Background, mode=mode)
+    scene.nextLayout(layout, mode=scene.COMBINE)
 
 
 class MainMenu(GridLayout):
@@ -15,13 +24,13 @@ class MainMenu(GridLayout):
         self.makeLayout()
 
     def makeLayout(self):
-        L.debug('\u001b[33mGenerating buttons and connecting them\u001b[0m')
+        L.debug('\u001b[34mGenerating buttons and connecting them\u001b[0m')
         start = Button('Start')
         options = Button('Options')
         exit = Button('Quit')
 
-        start.clicked.connect(lambda: self.scene.nextLayout(Maps, mode=self.scene.SAVE))
-        options.clicked.connect(lambda: self.scene.nextLayout(Options, mode=self.scene.SAVE))
+        start.clicked.connect(lambda: withBackground(self.scene, Maps, mode=self.scene.SAVE))
+        options.clicked.connect(lambda: withBackground(self.scene, Options, mode=self.scene.SAVE))
         exit.clicked.connect(quit)
 
         L.debug('\u001b[34mAdding buttons to layout\u001b[0m')
@@ -135,7 +144,7 @@ class InGameMenu(GridLayout):
         exit = Button('Exit')
 
         mainMenu.clicked.connect(self.scene.recoverTimer)
-        mainMenu.clicked.connect(lambda: self.scene.nextLayout(MainMenu))
+        mainMenu.clicked.connect(lambda: withBackground(self.scene, MainMenu))
         exit.clicked.connect(quit)
 
         L.debug('\u001b[34mConnecting esc to prevLayout\u001b[0m')

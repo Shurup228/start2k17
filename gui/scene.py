@@ -35,7 +35,8 @@ class Wrapper:
         layout.hide()
 
     def forEach(self, funcName: str):
-        L.debug('\u001b[34mApplying {} in Wrapper\u001b[0m'.format(funcName))
+        if funcName not in 'prepareGeometryupdateresizerepaint':
+            L.debug('\u001b[34mApplying {} in Wrapper\u001b[0m'.format(funcName))
         for layout in self.layouts:
             getattr(layout, funcName)()
 

@@ -39,7 +39,7 @@ class MainWindow(QWidget):
         self.layout().addWidget(self.__view)
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        self.__scene.nextLayout(Background, 'mainBackground.jpg')
+        self.__scene.nextLayout(Background)
         self.__scene.nextLayout(MainMenu, mode=self.__scene.COMBINE)
 
         self.setWindowFlags(Qt.CustomizeWindowHint)
