@@ -3,8 +3,11 @@
 
 from logging import getLogger, INFO, DEBUG
 from abc import ABCMeta, abstractmethod
+
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsItem
-from objects.map_elements import Wall, Air
+from PyQt5.QtGui import QImage
+
+from objects.map_elements import Wall, Air, BackgroundImage
 
 L = getLogger('gameLogger')
 
@@ -51,11 +54,17 @@ class Layout(metaclass=ABCMeta):
 
     def show(self):
         """Add items to scene."""
+        if not self.hided:
+            L.debug('\u001b[34mSkipping showing in {}\u001b[0m'.format(self))
+            return
         L.debug('\u001b[32mhided = False in {}\u001b[0m'.format(self))
         self.hided = False
 
     def hide(self):
         """Remove items from scene."""
+        if self.hided:
+            L.debug('\u001b[34mSkipping hiding in {}\u001b[0m'.format(self))
+            return
         L.debug('\u001b[32mhided = True in {}\u001b[0m'.format(self))
         self.hided = True
 
@@ -191,6 +200,17 @@ class GridLayout(Layout):
         # Here too
         L.debug('\u001b[34mRemoving {} from scene\u001b[0m'.format(self))
         self.scene.removeItem(self._rootItem)
+
+
+class Background(GridLayout):
+    def __init__(self, scene, path):
+        super().__init__(scene)
+        self.image = QImage(path)
+
+        self.fillBackground()
+
+    def fillBackground(self):
+        self.addItem(BackgroundImage(self.image), 0, 0)
 
 
 class Map(GridLayout):

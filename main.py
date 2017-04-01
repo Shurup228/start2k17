@@ -10,6 +10,7 @@ from PyQt5.QtCore import Qt
 from gui.scene import Scene
 from gui.view import GraphicsView
 from gui.menus import MainMenu
+from gui.layout import Background
 
 L = logging.getLogger('gameLogger')
 L.setLevel(logging.DEBUG)
@@ -38,7 +39,8 @@ class MainWindow(QWidget):
         self.layout().addWidget(self.__view)
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        self.__scene.nextLayout(MainMenu)
+        self.__scene.nextLayout(Background, 'mainBackground.jpg')
+        self.__scene.nextLayout(MainMenu, mode=self.__scene.COMBINE)
 
         self.setWindowFlags(Qt.CustomizeWindowHint)
         L.debug('\u001b[33mInitialized layout, showing...\u001b[0m')

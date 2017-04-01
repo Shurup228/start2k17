@@ -16,6 +16,20 @@ class Object(QGraphicsRectItem):
         self.setRect(x, y, width, height)
 
 
+class BackgroundImage(Object):
+    def __init__(self, image):
+        super().__init__()
+        self.image = image
+
+    def paint(self, painter, style=None, widget=None):
+        super().paint(painter, style, widget)
+
+        source = QRectF(self.image.rect())
+        target = self.scene().sceneRect()
+
+        painter.drawImage(target, self.image, source)
+
+
 class Wall(Object):
 
     def paint(self, painter, style=None, widget=None):

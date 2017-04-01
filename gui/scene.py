@@ -14,10 +14,12 @@ class Wrapper:
     def __init__(self, *layouts):
         L.debug('\u001b[33mCreating Wrapper for combo mode\u001b[0m')
         self.layouts = [*layouts]
+        self.hided = True
 
-        functions = ['pause', 'show', 'hide', 'resume', 'resize', 'repaint',
-                     'update', 'prepareGeomety']
+        functions = ['pause', 'resume', 'resize', 'repaint', 'update',
+                     'prepareGeometry']
         L.debug('\u001b[34mFilling Wrapper with functions\u001b[0m')
+
         for func in functions:
             f = lambda: self.forEach(func)
             setattr(self, func, f)
@@ -36,6 +38,14 @@ class Wrapper:
         L.debug('\u001b[34mApplying {} in Wrapper\u001b[0m'.format(funcName))
         for layout in self.layouts:
             getattr(layout, funcName)()
+
+    def hide(self):
+        self.hided = True
+        self.forEach('hide')
+
+    def show(self):
+        self.hided = False
+        self.forEach('show')
 
 
 class Scene(QGraphicsScene):
@@ -134,6 +144,9 @@ class Scene(QGraphicsScene):
                 self.hide(self.layout)
             elif mode == self.COMBINE:
                 curScene = self.__sceneStack.pop()
+
+                self.hide(curScene)
+                self.hide(layout)
 
                 try:
                     curScene.addLayout(layout)
