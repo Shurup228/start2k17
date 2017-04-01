@@ -9,14 +9,6 @@ from gui.layout import Background
 L = getLogger('gameLogger')
 
 
-def withBackground(scene, layout, *args, mode=None, opacity=1):
-    L.debug('\u001b[34mAdding background to {}\u001b[0m'.format(layout))
-    mode = mode or scene.CLEAR
-
-    scene.nextLayout(Background, opacity, mode=mode)
-    scene.nextLayout(layout, *args, mode=scene.COMBINE)
-
-
 class MainMenu(GridLayout):
     def __init__(self, scene):
         super().__init__(scene)
@@ -30,10 +22,11 @@ class MainMenu(GridLayout):
         exit = Button('Quit')
 
         wrap = self.scene.wrap
+        nextLayout = self.scene.nextLayout
+        saveMode = self.scene.SAVE
 
-        # start.clicked.connect(lambda: withBackground(self.scene, Maps, mode=self.scene.SAVE))
-        start.clicked.connect(lambda: self.scene.nextLayout(wrap({Background: (), Maps: ()}), mode=self.scene.SAVE))
-        options.clicked.connect(lambda: withBackground(self.scene, Options, mode=self.scene.SAVE))
+        start.clicked.connect(lambda: nextLayout(wrap({Background: (), Maps: ()}), mode=saveMode))
+        options.clicked.connect(lambda: nextLayout(wrap({Background: (), Options: ()}), mode=saveMode))
         exit.clicked.connect(quit)
 
         L.debug('\u001b[34mAdding buttons to layout\u001b[0m')
@@ -107,8 +100,12 @@ class Maps(GridLayout):
         self.maps = [map for map in listdir('maps') if map.endswith('.map')]
 
     def makeLayout(self):
+        from os import sep
         self.getMaps()
         L.debug('\u001b[34mBuilding map\u001b[0m')
+
+        wrap = self.scene.wrap
+        nextLayout = self.scene.nextLayout
 
         row = col = 0
         for map in self.maps:
@@ -117,9 +114,7 @@ class Maps(GridLayout):
                 row += 1
 
             button = Button(map)
-            button.clicked.connect(lambda map=map:
-                                   withBackground(self.scene, Map,
-                                                  'maps/' + map, opacity=0.6))
+            button.clicked.connect(lambda map=map: nextLayout(wrap({Background: (0.6,), Map: ('maps' + sep + map,)})))
             self.addItem(button, row, col)
 
             col += 1
