@@ -29,7 +29,10 @@ class MainMenu(GridLayout):
         options = Button('Options')
         exit = Button('Quit')
 
-        start.clicked.connect(lambda: withBackground(self.scene, Maps, mode=self.scene.SAVE))
+        wrap = self.scene.wrap
+
+        # start.clicked.connect(lambda: withBackground(self.scene, Maps, mode=self.scene.SAVE))
+        start.clicked.connect(lambda: self.scene.nextLayout(wrap({Background: (), Maps: ()}), mode=self.scene.SAVE))
         options.clicked.connect(lambda: withBackground(self.scene, Options, mode=self.scene.SAVE))
         exit.clicked.connect(quit)
 

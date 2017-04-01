@@ -8,7 +8,7 @@ from PyQt5.QtCore import QTimer
 L = getLogger('gameLogger')
 
 
-class Wrapper:
+class _Wrapper:
     """Helper for scene combined mode."""
 
     def __init__(self, *layouts):
@@ -127,10 +127,24 @@ class Scene(QGraphicsScene):
 
         self.__sceneStack.clear()
 
+    def wrap(self, toWrap):
+        """Wraps scenes in wrapper and return it.
+
+        toWrap is a dict, with key = layout and value = args, scene passed to
+        layouts implicitly
+        """
+        L.debug('\u001b[34mWrapping {}\u001b[0m'.format(toWrap))
+        wrapper = _Wrapper()
+        for layout, args in toWrap.items():
+            wrapper.addLayout(layout(self, *args))
+
+        return wrapper
+
     def nextLayout(self, layout, *args, mode=None):
         mode = mode or self.CLEAR
         L.debug('\u001b[34mSetting next layout {} in {} mode\u001b[0m'.format(layout, mode))
-        layout = layout(self, *args)
+        if not isinstance(layout, _Wrapper):
+            layout = layout(self, *args)
 
         if len(self.__sceneStack):
             if mode == self.PAUSE:
@@ -152,7 +166,7 @@ class Scene(QGraphicsScene):
                 try:
                     curScene.addLayout(layout)
                 except AttributeError:
-                    layout = Wrapper(curScene, layout)
+                    layout = _Wrapper(curScene, layout)
             else:
                 self.clear()
 
