@@ -79,10 +79,10 @@ class Layout(metaclass=ABCMeta):
         self.update()
 
     def pause(self):
-        pass
+        L.debug('\u001b[34mPausing layout\u001b[0m')
 
     def resume(self):
-        pass
+        L.debug('\u001b[34mResuming layout\u001b[0m')
 
     def update(self):
         """Updates all items in layout.
@@ -211,11 +211,11 @@ class GridLayout(Layout):
 class Background(GridLayout):
     def __init__(self, scene, opacity=1, path=None):
         super().__init__(scene)
-        L.debug('\u001b[34mInitializing Background\u001b[0m')
+        L.debug('\u001b[33mInitializing Background\u001b[0m')
         self.opacity = opacity
         L.debug('\u001b[32mOpacity = {}\u001b[0m'.format(opacity))
         path = path or self.getPath()
-        L.debug('\u001b[32mbackground = {}\u001b[0m'.format(path))
+        L.debug('\u001b[32mBackground = {}\u001b[0m'.format(path))
         self.image = QImage(path)
 
         self.fillBackground()

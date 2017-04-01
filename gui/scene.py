@@ -21,11 +21,14 @@ class _Wrapper:
         L.debug('\u001b[34mFilling Wrapper with functions\u001b[0m')
 
         for func in functions:
-            f = lambda: self.forEach(func)
+            f = lambda func=func: self.forEach(func)
             setattr(self, func, f)
 
+    def __call__(self, *args):
+        return self
+
     def addLayout(self, layout):
-        L.debug('Adding {} to Wrapper'.format(layout))
+        L.debug('\u001b[34mAdding {} to Wrapper\u001b[0m'.format(layout))
         self.layouts.append(layout)
 
     def removeLayout(self, layout):
@@ -143,8 +146,7 @@ class Scene(QGraphicsScene):
     def nextLayout(self, layout, *args, mode=None):
         mode = mode or self.CLEAR
         L.debug('\u001b[34mSetting next layout {} in {} mode\u001b[0m'.format(layout, mode))
-        if not isinstance(layout, _Wrapper):
-            layout = layout(self, *args)
+        layout = layout(self, *args)
 
         if len(self.__sceneStack):
             if mode == self.PAUSE:
@@ -155,6 +157,7 @@ class Scene(QGraphicsScene):
 
                 L.debug('\u001b[34mPausing {}\u001b[0m'.format(self.layout))
                 self.layout.pause()
+                self.layout.hide()
             elif mode == self.SAVE:
                 self.hide(self.layout)
             elif mode == self.COMBINE:
