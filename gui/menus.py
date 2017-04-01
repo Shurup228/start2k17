@@ -9,12 +9,12 @@ from gui.layout import Background
 L = getLogger('gameLogger')
 
 
-def withBackground(scene, layout, mode=None):
+def withBackground(scene, layout, *args, mode=None, opacity=1):
     L.debug('\u001b[34mAdding background to {}\u001b[0m'.format(layout))
     mode = mode or scene.CLEAR
 
-    scene.nextLayout(Background, mode=mode)
-    scene.nextLayout(layout, mode=scene.COMBINE)
+    scene.nextLayout(Background, opacity, mode=mode)
+    scene.nextLayout(layout, *args, mode=scene.COMBINE)
 
 
 class MainMenu(GridLayout):
@@ -115,7 +115,8 @@ class Maps(GridLayout):
 
             button = Button(map)
             button.clicked.connect(lambda map=map:
-                                   self.scene.nextLayout(Map, 'maps/' + map))
+                                   withBackground(self.scene, Map,
+                                                  'maps/' + map, opacity=0.6))
             self.addItem(button, row, col)
 
             col += 1

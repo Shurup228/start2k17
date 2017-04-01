@@ -209,9 +209,11 @@ class GridLayout(Layout):
 
 
 class Background(GridLayout):
-    def __init__(self, scene, path=None):
+    def __init__(self, scene, opacity=1, path=None):
         super().__init__(scene)
         L.debug('\u001b[34mInitializing Background\u001b[0m')
+        self.opacity = opacity
+        L.debug('\u001b[32mOpacity = {}\u001b[0m'.format(opacity))
         path = path or self.getPath()
         L.debug('\u001b[32mbackground = {}\u001b[0m'.format(path))
         self.image = QImage(path)
@@ -227,7 +229,7 @@ class Background(GridLayout):
         return 'backgrounds' + sep + choice(images)
 
     def fillBackground(self):
-        self.addItem(BackgroundImage(self.image), 0, 0)
+        self.addItem(BackgroundImage(self.image, self.opacity), 0, 0)
 
 
 class Map(GridLayout):

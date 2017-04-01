@@ -2,8 +2,8 @@
 # coding=utf-8
 
 from PyQt5.QtWidgets import QGraphicsRectItem
-from PyQt5.QtCore import QRectF
-from PyQt5.QtGui import QImage
+from PyQt5.QtCore import QRectF, Qt
+from PyQt5.QtGui import QImage, QPen
 
 
 class Object(QGraphicsRectItem):
@@ -17,12 +17,15 @@ class Object(QGraphicsRectItem):
 
 
 class BackgroundImage(Object):
-    def __init__(self, image):
+    def __init__(self, image, opacity=1):
         super().__init__()
+        self.opacity = opacity
         self.image = image
 
     def paint(self, painter, style=None, widget=None):
         super().paint(painter, style, widget)
+
+        painter.setOpacity(self.opacity)
 
         source = QRectF(self.image.rect())
         target = self.scene().sceneRect()
@@ -44,7 +47,11 @@ class Wall(Object):
 
 
 class Air(Object):
+    def __init__(self):
+        super().__init__()
+
+        self.setPen(QPen(Qt.transparent))
 
     def paint(self, painter, style=None, widget=None):
         super().paint(painter, style, widget)
-        painter.eraseRect(self.boundingRect())
+        painter.setOpacity(0)
