@@ -9,6 +9,8 @@ from PyQt5.QtGui import QImage
 
 from objects.map_elements import Wall, Air, BackgroundImage
 
+
+
 L = getLogger('gameLogger')
 
 

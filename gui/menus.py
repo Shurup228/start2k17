@@ -3,7 +3,7 @@
 
 from logging import getLogger
 from gui.layout import GridLayout, Map
-from gui.buttons import Button
+from gui.widgets import Button, Label
 from gui.layout import Background
 
 L = getLogger('gameLogger')
@@ -114,7 +114,10 @@ class Maps(GridLayout):
                 row += 1
 
             button = Button(map)
-            button.clicked.connect(lambda map=map: nextLayout(wrap({Background: (0.6,), Map: ('maps' + sep + map,)})))
+            button.clicked.connect(lambda map=map: nextLayout(Loading, map))
+
+            button.clicked.connect(lambda map=map: nextLayout(wrap({Background: (0.6,), Map: ('maps' + sep + map,)}),
+                                                              mode=self.scene.COMBINE))
             self.addItem(button, row, col)
 
             col += 1
@@ -163,3 +166,14 @@ class InGameMenu(GridLayout):
         super().hide()
         L.debug('\u001b[34mDisconnecting prevLayout from esc\u001b[0m')
         self.view.escPressed.disconnect(self.scene.prevLayout)
+
+
+class Loading(GridLayout):
+    def __init__(self, scene, mapName):
+        super().__init__(scene)
+        self.mapName = mapName
+        self.makeLayout()
+
+    def makeLayout(self):
+        loading = Label('Loading ' + self.mapName + '...')
+        self.addItem(loading, 0, 0)
