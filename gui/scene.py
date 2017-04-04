@@ -163,9 +163,6 @@ class Scene(QGraphicsScene):
             elif mode == self.COMBINE:
                 curScene = self.__sceneStack.pop()
 
-                self.hide(curScene)
-                self.hide(layout)
-
                 try:
                     curScene.addLayout(layout)
                 except AttributeError:

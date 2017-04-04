@@ -7,6 +7,8 @@ from sys import argv, exit
 from PyQt5.QtWidgets import (QWidget, QApplication, QBoxLayout, QDesktopWidget)
 from PyQt5.QtCore import Qt
 
+import pdb
+
 from gui.scene import Scene
 from gui.view import GraphicsView
 from gui.menus import MainMenu
