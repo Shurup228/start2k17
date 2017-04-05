@@ -20,9 +20,15 @@ class _Wrapper:
                      'prepareGeometry']
         L.debug('\u001b[34mFilling Wrapper with functions\u001b[0m')
 
+        # Creating functions for wrapper
         for func in functions:
             f = lambda func=func: self.forEach(func)
             setattr(self, func, f)
+
+        self.__repr__ = self.__str__
+
+    def __str__(self):
+        return 'Wrapper[' + ', '.join([str(l) for l in self.layouts]) + ']'
 
     def __call__(self, *args):
         return self

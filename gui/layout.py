@@ -10,7 +10,6 @@ from PyQt5.QtGui import QImage
 from objects.map_elements import Wall, Air, BackgroundImage
 
 
-
 L = getLogger('gameLogger')
 
 
@@ -58,17 +57,17 @@ class Layout(metaclass=ABCMeta):
         """Add items to scene."""
         if not self.hided:
             L.debug('\u001b[34mSkipping showing in {}\u001b[0m'.format(self))
-            return
-        L.debug('\u001b[32mhided = False in {}\u001b[0m'.format(self))
+            return 'abort'
         self.hided = False
+        L.debug('\u001b[32mhided = False in {}\u001b[0m'.format(self))
 
     def hide(self):
         """Remove items from scene."""
         if self.hided:
             L.debug('\u001b[34mSkipping hiding in {}\u001b[0m'.format(self))
-            return
-        L.debug('\u001b[32mhided = True in {}\u001b[0m'.format(self))
+            return 'abort'
         self.hided = True
+        L.debug('\u001b[32mhided = True in {}\u001b[0m'.format(self))
 
     def prepareGeometry(self):
         """Prepare scene to resolution changes.
@@ -198,13 +197,15 @@ class GridLayout(Layout):
                 item.setPos(x, y)
 
     def show(self):
-        super().show()
+        if super().show() == 'abort':
+            return
         # Here, at last, we can use the benefits of item group
-        L.debug('\u001b[34mAdding {} to scene\u001b[0m'.format(self))
         self.scene.addItem(self._rootItem)
+        L.debug('\u001b[34mAdded {} to scene\u001b[0m'.format(self))
 
     def hide(self):
-        super().hide()
+        if super().hide() == 'abort':
+            return
         # Here too
         L.debug('\u001b[34mRemoving {} from scene\u001b[0m'.format(self))
         self.scene.removeItem(self._rootItem)
@@ -241,12 +242,14 @@ class Map(GridLayout):
     def __init__(self, scene, map):
         super().__init__(scene)
         L.debug('\u001b[34mInitializing Map\u001b[0m')
-        L.debug('\u001b[32mmap = {}\u001b[0m'.format(map))
+        L.debug('\u001b[32map = {}\u001b[0m'.format(map))
+        self.counter = 0
+        self.map = map
 
         L.debug('\u001b[34mConnecting openMenu to esc\u001b[0m')
         self.view.escPressed.connect(self.openMenu)
 
-        self.parseMap(map)
+        self.parseMap()
 
     def openMenu(self):
         from gui.menus import InGameMenu
@@ -256,10 +259,10 @@ class Map(GridLayout):
 
         nextLayout(wrap({Background: (), InGameMenu: ()}), mode=self.scene.PAUSE)
 
-    def parseMap(self, mapfile):
+    def parseMap(self):
         L.debug('\u001b[34mParsing map file\u001b[0m')
         L.setLevel(INFO)
-        mapFile = open(mapfile, 'r')
+        mapFile = open(self.map, 'r')
 
         skipped = 0
         for row, line in enumerate(mapFile):

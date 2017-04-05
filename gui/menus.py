@@ -100,11 +100,9 @@ class Maps(GridLayout):
         self.maps = [map for map in listdir('maps') if map.endswith('.map')]
 
     def makeLayout(self):
-        from os import sep
         self.getMaps()
         L.debug('\u001b[34mBuilding map\u001b[0m')
 
-        wrap = self.scene.wrap
         nextLayout = self.scene.nextLayout
 
         row = col = 0
@@ -115,9 +113,6 @@ class Maps(GridLayout):
 
             button = Button(map)
             button.clicked.connect(lambda map=map: nextLayout(Loading, map))
-
-            button.clicked.connect(lambda map=map: nextLayout(wrap({Background: (0.6,), Map: ('maps' + sep + map,)}),
-                                                              mode=self.scene.COMBINE))
             self.addItem(button, row, col)
 
             col += 1
@@ -171,9 +166,22 @@ class InGameMenu(GridLayout):
 class Loading(GridLayout):
     def __init__(self, scene, mapName):
         super().__init__(scene)
+        L.debug('\u001b[33mInitializing Loading layout\u001b[0m')
         self.mapName = mapName
         self.makeLayout()
 
     def makeLayout(self):
         loading = Label('Loading ' + self.mapName + '...')
         self.addItem(loading, 0, 0)
+
+    def update(self):
+        super().update()
+        from os import sep
+
+        wrap = self.scene.wrap
+        nextLayout = self.scene.nextLayout
+
+        try:
+            nextLayout(wrap({Background: (0.6,), Map: ('maps' + sep + self.mapName,)}))
+        except AttributeError:
+            pass
