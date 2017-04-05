@@ -4,8 +4,33 @@
 from logging import getLogger
 from PyQt5.QtWidgets import QGraphicsScene
 from PyQt5.QtCore import QTimer
+from gui.layout import GridLayout
+from gui.widgets import Label
 
 L = getLogger('gameLogger')
+
+
+class Loading(GridLayout):
+    def __init__(self, scene, toLoad):
+        super().__init__(scene)
+        L.debug('\u001b[33mInitializing Loading layout\u001b[0m')
+        self.toLoad = toLoad
+        self.makeLayout()
+
+    def makeLayout(self):
+        loading = Label('Loading ...')
+        self.addItem(loading, 0, 0)
+
+    def update(self):
+        super().update()
+
+        wrap = self.scene.wrap
+        nextLayout = self.scene.nextLayout
+
+        try:
+            nextLayout(wrap(self.toLoad))
+        except AttributeError:
+            pass
 
 
 class _Wrapper:
@@ -136,11 +161,18 @@ class Scene(QGraphicsScene):
 
         self.__sceneStack.clear()
 
+    def load(self, toLoad):
+        """Sets the loading screen and load toLoad, then shows toLoad.
+
+        Arg toLoad is a dict tha will be passed to scene.wrap function.
+        """
+        self.nextLayout(Loading, toLoad)
+
     def wrap(self, toWrap):
         """Wraps scenes in wrapper and return it.
 
         toWrap is a dict, with key = layout and value = args, scene passed to
-        layouts implicitly
+        layouts implicitly.
         """
         L.debug('\u001b[34mWrapping {}\u001b[0m'.format(toWrap))
         wrapper = _Wrapper()
