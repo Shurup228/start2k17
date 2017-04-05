@@ -58,3 +58,5 @@ class GraphicsView(QGraphicsView):
         if event.key() == Qt.Key_Escape:
             L.debug('\u001b[32mEsc pressed\u001b[0m')
             self.escPressed.emit()
+
+        # elif event.key() == Qt.Key_Up:

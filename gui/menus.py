@@ -2,9 +2,8 @@
 # coding=utf-8
 
 from logging import getLogger
-from gui.layout import GridLayout, Map
+from gui.layout import GridLayout, Map, Background, Entities
 from gui.widgets import Button
-from gui.layout import Background
 
 L = getLogger('gameLogger')
 
@@ -116,7 +115,9 @@ class Maps(GridLayout):
 
             button = Button(map)
             # button.clicked.connect(lambda map=map: nextLayout(Loading, map))
-            button.clicked.connect(lambda map=map: load({Background: (0.6,), Map: ('maps{}{}'.format(sep, map),)}))
+            button.clicked.connect(lambda map=map: load({Background: (0.6,),
+                                                         Map: ('maps{}{}'.format(sep, map),),
+                                                         Entities: ()}))
             self.addItem(button, row, col)
 
             col += 1
