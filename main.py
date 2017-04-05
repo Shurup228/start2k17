@@ -41,8 +41,7 @@ class MainWindow(QWidget):
         self.layout().addWidget(self.__view)
         self.layout().setContentsMargins(0, 0, 0, 0)
 
-        self.__scene.nextLayout(Background)
-        self.__scene.nextLayout(MainMenu, mode=self.__scene.COMBINE)
+        self.__scene.nextLayout(self.__scene.wrap({Background: (), MainMenu: ()}))
 
         self.setWindowFlags(Qt.CustomizeWindowHint)
         L.debug('\u001b[33mInitialized layout, showing...\u001b[0m')

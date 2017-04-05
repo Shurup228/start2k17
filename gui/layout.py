@@ -7,7 +7,7 @@ from abc import ABCMeta, abstractmethod
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsItem
 from PyQt5.QtGui import QImage
 
-from objects.map_elements import Wall, Air, BackgroundImage
+from objects.map_elements import Wall, Air, BackgroundImage, Actor
 
 
 L = getLogger('gameLogger')
@@ -291,3 +291,31 @@ class Map(GridLayout):
 
         L.debug('\u001b[34mConnecting openMenu to esc\u001b[0m')
         self.view.escPressed.connect(self.openMenu)
+
+
+class Entities(Layout):
+    def __init__(self, scene):
+        super().__init__(scene)
+        self.entities = []
+        self.fill()
+
+    def addItem(self, item, posx, posy):
+        self.entities.append(item)
+        item.setPos(posx, posy)
+
+    def resize(self):
+        pass
+
+    def repaint(self):
+        pass
+
+    def show(self):
+        super().show()
+        self.scene.addItem(self.entities[0])
+        self.entities[0].grabKeyboard()
+
+    def hide(self):
+        pass
+
+    def fill(self):
+        self.addItem(Actor(), 0, 0)

@@ -55,3 +55,24 @@ class Air(Object):
     def paint(self, painter, style=None, widget=None):
         super().paint(painter, style, widget)
         painter.setOpacity(0)
+
+
+class Actor(Object):
+    def __init__(self):
+        super().__init__()
+        self.keys = {Qt.Key_Left: lambda: self.moveBy(-10, 0),
+                     Qt.Key_Right: lambda: self.moveBy(10, 0),
+                     Qt.Key_Down: lambda: self.moveBy(0, 10),
+                     Qt.Key_Up: lambda: self.moveBy(0, -10)}
+
+    def paint(self, painter, style=None, widget=None):
+        super().paint(painter, style, widget)
+        painter.drawRect(self.boundingRect())
+
+    def keyPressEvent(self, event):
+        super().keyPressEvent(event)
+        try:
+            self.keys[event.key()]()
+
+        except KeyError:
+            pass
